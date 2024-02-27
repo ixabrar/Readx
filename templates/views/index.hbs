@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Roboto');
+
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e8e8e8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            height: 55px;
+            background-color: #2F1847;
+            ;
+        }
+
+        #log-out button {
+            height: 40px;
+            width: 100px;
+            background-color: beige;
+            float: right;
+            margin: 7px 10px 0px 0px;
+            transition: background-color 0.3s;
+            /* Add transition for smooth effect */
+        }
+
+        #log-out button:hover {
+            cursor: pointer;
+            background-color: lightgoldenrodyellow;
+            /* Change color on hover */
+        }
+
+        i {
+            margin-right: 10px;
+        }
+
+        h2 {
+            margin: 0px;
+        }
+
+        h6 {
+            margin: 0px;
+            color: #777;
+        }
+
+        .main {
+            display: flex;
+        }
+
+        #accordian {
+            background-image: linear-gradient(to right, #3c4278, #3270a6);
+            width: 250px;
+            padding: 10px;
+            float: left;
+            height: auto;
+            overflow-x: hidden;
+            position: relative;
+            padding-right: 0px;
+
+        }
+
+        .logininfo {
+            height: 265px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .logininfo img {
+            height: 170px;
+            margin: 6px -8px;
+            border-radius: 50%;
+        }
+
+        .main-navbar {
+            position: relative;
+        }
+
+        #accordian li {
+            list-style-type: none;
+            cursor: pointer;
+        }
+
+        #accordian ul li a {
+            text-decoration: none;
+            font-size: 15px;
+            line-height: 45px;
+            display: block;
+            padding: 0px 20px;
+            transition-duration: 0.6s;
+            transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            color: white;
+        }
+
+        #accordian>ul>li.active>a {
+            color: #20283e;
+            background-color: transparent;
+            transition: all 0.7s;
+        }
+
+
+        #accordian a:not(:only-child):after {
+            content: "\f105";
+            position: absolute;
+            right: 20px;
+            top: 10%;
+            font-size: 14px;
+            font-family: "Font Awesome 5 Free";
+            display: inline-block;
+            padding-right: 3px;
+            vertical-align: middle;
+            font-weight: 900;
+            transition: 0.5s;
+        }
+
+        #accordian .active>a:not(:only-child):after {
+            transform: rotate(90deg);
+        }
+
+        .selector-active {
+            width: 100%;
+            display: inline-block;
+            position: absolute;
+            height: 37px;
+            top: 0px;
+            left: 0px;
+            transition-duration: 0.6s;
+            transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            background-color: #e8e8e8;
+            border-top-left-radius: 50px;
+            border-bottom-left-radius: 50px;
+        }
+
+        .selector-active .top,
+        .selector-active .bottom {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background-color: #e8e8e8;
+            right: 0;
+        }
+
+        .selector-active .top {
+            top: -25px;
+        }
+
+        .selector-active .bottom {
+            bottom: -25px;
+        }
+
+        .selector-active .top:before,
+        .selector-active .bottom:before {
+            content: '';
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3270a6;
+        }
+
+        .selector-active .top:before {
+            left: -25px;
+            top: -25px;
+        }
+
+        .selector-active .bottom:before {
+            bottom: -25px;
+            left: -25px;
+        }
+
+        .mainbody {
+            width: 100%;
+        }
+
+        #frame {
+            height: 850px;
+            width: 100%;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            // Handle click events on menu items
+            $("#accordian").on("click", "li", function (e) {
+                e.preventDefault(); // Prevent default link behavior
+                var pageURL = $(this).find('a').attr('href'); // Get the page URL from the clicked item
+
+                // Load the content dynamically into the content div
+                $('#content').fadeOut('fast', function () {
+                    $(this).load(pageURL, function () {
+                        $(this).fadeIn('fast');
+                    });
+                });
+            });
+
+            // Rest of your existing JavaScript code here
+            // ---------vertical-menu with-inner-menu-active-animation-----------
+            var tabsVerticalInner = $('#accordian');
+            var selectorVerticalInner = $('#accordian').find('li').length;
+            var activeItemVerticalInner = tabsVerticalInner.find('.active');
+            var activeWidthVerticalHeight = activeItemVerticalInner.innerHeight();
+            var activeWidthVerticalWidth = activeItemVerticalInner.innerWidth();
+            var itemPosVerticalTop = activeItemVerticalInner.position();
+            var itemPosVerticalLeft = activeItemVerticalInner.position();
+            $(".selector-active").css({
+                "top": itemPosVerticalTop.top + "px",
+                "left": itemPosVerticalLeft.left + "px",
+                "height": activeWidthVerticalHeight + "px",
+                "width": activeWidthVerticalWidth + "px"
+            });
+
+            $("#accordian").on("click", "li", function (e) {
+                $('#accordian ul li').removeClass("active");
+                $(this).addClass('active');
+                var activeWidthVerticalHeight = $(this).innerHeight();
+                var activeWidthVerticalWidth = $(this).innerWidth();
+                var itemPosVerticalTop = $(this).position();
+                var itemPosVerticalLeft = $(this).position();
+                $(".selector-active").css({
+                    "top": itemPosVerticalTop.top + "px",
+                    "left": itemPosVerticalLeft.left + "px",
+                    "height": activeWidthVerticalHeight + "px",
+                    "width": activeWidthVerticalWidth + "px"
+                });
+            });
+
+            var path = window.location.pathname.split("/").pop();
+            if (path === '') {
+                path = 'index.hbs';
+            }
+            var target = $('#accordian ul li a[href="' + path + '"]');
+            target.parent().addClass('active');
+        });
+
+        function change(name) {
+            update(name);
+        }
+
+        function update(name) {
+            var i = name;
+            switch (name) {
+                case "dashboard":
+                    console.log("Setting src to DASHBOARD.hbs");
+                    document.getElementById('frame').src = './dashboard'; // Use a relative path with the correct file extension
+                    break;
+
+                case "register":
+                    console.log("Setting src to registration.hbs");
+                    document.getElementById('frame').src = './register'; // Use a relative path
+                    break;
+
+                case "update":
+                    console.log("Setting src to update.hbs");
+                    document.getElementById('frame').src = './update'; // Use a relative path
+                    break;
+
+                case "view":
+                    console.log("Setting src to view.hbs");
+                    document.getElementById('frame').src = './view'; // Use a relative path
+                    break;
+                case "More":
+                    console.log("setting view to More.hbs");
+                    document.getElementById('frame').src = './More';
+                    break;
+                default:
+                    console.log("Invalid name provided");
+                    break;
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <div class="header">
+        <!--here the header code-->
+
+        <a href="/logout" id="log-out"><button>LOGOUT</button></a>
+
+    </div>
+    <div class="main">
+        <div id="accordian">
+            <div class="logininfo">
+                <center><img src="{{Image}}" alt="image here"></center>
+
+                <center>
+                    <p id="vihical-no">{{No}}</p>
+                </center>
+            </div>
+            <ul class="show-dropdown main-navbar">
+                <div class="selector-active">
+                    <div class="top"></div>
+                    <div class="bottom"></div>
+                </div>
+                <li class="active">
+                    <a onclick="change('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                </li>
+                <li>
+                    <a onclick="change('register')"><i class="far fa-address-book"></i>New Admission</a>
+                </li>
+                <li>
+                    <a onclick="change('update')"><i class="far fa-clone"></i>Update information</a>
+                </li>
+                <li>
+                    <a onclick="change('view')"><i class="far fa-calendar-alt"></i>Student Information</a>
+                </li>
+
+                <li>
+                    <a onclick="change('More')"><i class="far fa-heart"></i>More</a>
+                </li>
+            </ul>
+        </div>
+        <div class="mainbody">
+            <iframe src="./dashboard" id="frame" frameborder="0"></iframe>
+
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto&display=swap">
+
+    <style>
+        body {
+
+            height: auto;
+            margin-top: auto;
+            display: flex;
+        }
+
+        .div-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .box-div {
+            display: flex;
+            justify-content: space-around;
+            height: 190px;
+            width: 98%;
+            margin-left: 10px;
+            border-radius: 17px;
+            margin-top: 16px;
+        }
+
+        .div1 {
+            background-color: #fff;
+            width: 23.5%;
+            height: auto;
+            margin: 10px;
+            border-radius: 17px;
+            margin-bottom: 20px;
+            /* Add some bottom margin */
+        }
+
+
+
+        .div1 img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .second-div {
+            display: flex;
+            justify-content: space-around;
+            height: 467px;
+            width: 98%;
+            margin-left: 10px;
+            border-radius: 17px;
+            margin-top: 16px;
+        }
+
+        .bar-div {
+            height: 98%;
+            width: 68%;
+            box-shadow: 5px 10px 10px #312c2c;
+
+            background-color: rgb(255, 255, 255);
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+
+        .pie-div {
+            height: 98%;
+            width: 30%;
+            background-color: rgb(255, 255, 255);
+            border-radius: 20px;
+            margin-top: 5px;
+        }
+
+        #myDoughnutChart {
+            height: 20px;
+            width: 50px;
+        }
+
+        .div1 {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 20px 5px;
+            padding: 20px;
+            border: 1px solid #FFF;
+            border-radius: 8px;
+            max-width: 300px;
+            font-family: 'Times New Roman', Times, serif;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            /* Transition for background-color and box-shadow */
+        }
+
+        .div1:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            border-width: 2px;
+            color: #312c2c;
+            background-color: #F5F5F5;
+             transform: scale(1.02)
+        }
+
+
+
+        .div1 img {
+            width: 50px;
+            height: auto;
+            margin-right: 15px;
+        }
+
+        .div1 .content {
+            text-align: left;
+        }
+
+        .div1 h5 {
+            margin: 0;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .div1 p {
+            margin: 0;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="div-container">
+        <div class="box-div">
+
+            <div class="div1">
+                <img src="/like.jpg" alt="">
+                <div class="content">
+                    <h5>Total Admission</h5>
+                    <p id="total">{{totalStudentCount}}</p>
+                </div>
+            </div>
+
+            <div class="div1">
+                <img src="/portal.jpg" alt="">
+                <div class="content">
+                    <h5>Registrations</h5>
+                    <p id="total">{{totalStudentsCurrentMonth}}</p>
+                </div>
+            </div>
+
+            <div class="div1">
+                <img src="/money-bag.jpg" alt="">
+                <div class="content">
+                    <h5>PAPER FEE</h5>
+                    <p id="total">{{grandTotal}}</p>
+                </div>
+            </div>
+            <div class="div1">
+                <img src="3d-credit-card.jpg" alt="">
+                <div class="content">
+                    <h5>Pending FEE</h5>
+                    <p id="total">{{TotalPendingFee}}</p>
+                </div>
+            </div>
+
+
+            <div class="div1">
+
+            </div>
+
+        </div>
+        <div class="second-div">
+            <div class="bar-div">
+
+                <canvas id="myBarChart"></canvas>
+            </div>
+            <div class="pie-div">
+                <canvas id="myDoughnutChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        // Assuming the server side passes the data correctly to these variables
+        const doughnutLabels = {{ json doughnutLabels }};
+        const doughnutValues = {{ json doughnutValues }};
+        const barLabels = {{ json barLabels }};
+        const barValues = {{ json barValues }};
+
+        // Doughnut Chart
+        const doughnutCtx = document.getElementById('myDoughnutChart').getContext('2d');
+        const myPieChart = new Chart(doughnutCtx, {
+            type: 'pie', // Change type to 'pie'
+            data: {
+                labels: doughnutLabels,
+                datasets: [{
+                    label: 'Number of Students',
+                    data: doughnutValues,
+                    backgroundColor: [
+                        'rgb(50, 89, 240)', // Segment 1 background color
+                        'rgb(54, 162, 235)', // Segment 2 background color
+                        'rgb(255, 205, 86)', // Segment 3 background color
+                        'rgb(25, 205, 86)', // Segment 4 background color
+                        'rgb(255, 25, 86)'
+                    ],
+                    borderColor: [
+                        'rgb(0, 0, 0)',
+                    ],
+                    borderWidth: 0.5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                 shadowBlur: 10,
+          hoverShadowBlur: 12,
+          shadowOffsetX: 10,
+          shadowOffsetY: 14,
+          offset: 0,
+                // Other options...
+            }
+        });
+
+
+
+        const barCtx = document.getElementById('myBarChart').getContext('2d');
+        const myBarChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: barLabels, // Corrected to use barLabels
+                datasets: [{
+                    label: 'Number of Students Registered',
+                    data: barValues, // Corrected to use barValues
+                    backgroundColor: 'rgb(54, 162, 235)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "cpp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/app.js -e js,hbs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connect-flash": "^0.1.1",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "hbs": "^4.2.0",
+    "moment": "^2.30.1",
+    "mongodb": "^6.3.0",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.0.2",
+    "twilio": "^4.21.0"
+  }
+}
