@@ -97,6 +97,27 @@ const feeStructureSchema = new mongoose.Schema({
     Pending: {
         type: Number,
     },
+    /*
+    pending: [
+        {
+            Installment-1st:
+            {
+                type:Number,
+
+            },
+            Installment-2nd:
+            {
+                type:Number,
+                
+            },
+            Installment-3rd:
+            {
+                type:Number,
+                
+            }
+        }
+    ]
+    */
     LLFee:{
         type:Number
     },

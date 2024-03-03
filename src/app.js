@@ -22,12 +22,11 @@ const port = process.env.PORT || 3000;
 
 const static_path = path.join(__dirname, "../public");
 const templates_path = path.join(__dirname, "../templates/views");
-const partials_path = path.join(__dirname, "../templates/partials");
 
 app.use(express.static(static_path));
 app.set("view engine", "hbs");
 app.set("views", templates_path);
-hbs.registerPartials(partials_path);
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -39,7 +38,7 @@ const twilioPhoneNumber = '+12406859764'; // Your Twilio phone number
 
 
 app.get("/", (req, res) => {
-  res.render("adminlogin");
+  res.render("index");
  
 });
 
@@ -55,7 +54,7 @@ app.get("/render", async (req, res) => {
       console.log('Current connection string:', connection.getConnectionString());
 
       // Render your view or perform other actions
-      res.render("index",{Image,No});
+      res.render("admin",{Image,No});
   } catch (error) {
       console.error('Connection failed:', error);
       // Handle the error or render an error page
@@ -75,7 +74,7 @@ app.get("/renderoff", async (req, res) => {
       console.log('Current connection string:', connection.getConnectionString());
 
       // Render your view or perform other actions
-      res.render("index",{Image,No});
+      res.render("admin",{Image,No});
   } catch (error) {
       console.error('Connection failed:', error);
       // Handle the error or render an error page
@@ -83,8 +82,8 @@ app.get("/renderoff", async (req, res) => {
   }
 });
 ////////////////////////////////////////////
-app.get("/adminlogin",(req,res)=>{
-  res.render("adminlogin");
+app.get("/admin",(req,res)=>{
+  res.render("admin");
 });
 
 /*
@@ -107,12 +106,36 @@ hbs.registerHelper('formatDate', function (date) {
   return moment(date).format('DD-MM-YYYY');
 });
 
-app.get("/register", (req, res) => {
-  res.render("register");
+app.get("/register", async (req, res) => {
+  try{
+
+    const totalno =await Student.aggregate([
+      {
+        $group: {
+          _id: null,       
+          totalCount: { $sum: 1 }  
+        }
+      }
+    ]);
+
+    const totalStudentCount = totalno[0].totalCount;
+    const plus1=totalStudentCount+1;
+
+
+    res.render("register",{plus1});
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send('Server Error');
+  }
+  
 });
 
 app.get("/login", (req, res) => {
   res.render("login");
+});
+
+app.get("/filter/askMonth", (req, res) => {
+  res.render("askMonth");
 });
 
 app.get("/view", (req, res) => {
@@ -138,7 +161,7 @@ app.get("/test",(rqs , res )=> {
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get('/logout',(req,res)=>{
-  res.render("adminlogin");
+  res.render("index");
 });
 //////////////////////////////////////////
 hbs.registerHelper('json', function(context) {
@@ -280,6 +303,7 @@ if (result.length > 0) {
 
 app.post("/register", async (req, res) => {
   try {
+
     console.log("Received POST request to /register");
     console.log("Request Body:", req.body);
 
@@ -483,7 +507,6 @@ app.post('/update', async (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/submitform", async (req, res) => {
   try {
-    
     const { ID, Name, MobNo, LicenceNo, LLRType, Type, AddmissionDate, Total, Deposite, Pending, MDLStatus } = req.body;
 
     console.log('Requested Data:', req.body);
@@ -504,7 +527,7 @@ app.post("/submitform", async (req, res) => {
           MDLStatus,
         },
       },
-      { new: true } // Return the modified document
+      { new: true }
     );
 
     const result2 = await FeeStructure.findOneAndUpdate(
@@ -521,11 +544,32 @@ app.post("/submitform", async (req, res) => {
           Pending,
         },
       },
-      { new: true } // Return the modified document
+      { new: true }
     );
 
     if (result1 && result2) {
-       res.redirect("back");
+      // Calculate new balance using the updated values
+      const updatedBalance = calculatebalance(result2);
+
+      // Update the FeeStructure document with the new balance
+      const updatedResult2 = await FeeStructure.findOneAndUpdate(
+        { ID },
+        { $set: { Balance: updatedBalance } },
+        { new: true }
+      );
+
+      console.log('Data in Student');
+      console.log('Student Deposite', result1.Deposite);
+      console.log('Student Pending', result1.Pending);
+      console.log('Data in FeeStructure');
+      console.log('FeeStructure Deposite', updatedResult2.Deposite);
+      console.log('FeeStructure Pending', updatedResult2.Pending);
+      console.log('FeeStructure DLFee', updatedResult2.DLFee);
+      console.log('FeeStructure LLFee', updatedResult2.LLFee);
+      console.log('FeeStructure GForm', updatedResult2.GForm);
+      console.log('FeeStructure Balance', updatedResult2.Balance);
+
+      res.redirect("back");
     } else {
       res.status(404).send(`Student with ID ${ID} not found`);
     }
@@ -535,8 +579,9 @@ app.post("/submitform", async (req, res) => {
   }
 });
 
-
-
+function calculatebalance(feeData) {
+  return feeData.Total - feeData.Pending - feeData.DLFee - feeData.LLFee - feeData.GForm;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -582,7 +627,7 @@ app.post("/deleteForm", async (req, res) => {
       },
       { new: true } // Return the modified document
   );
-  const result2 = await FeeStructure.delete(
+  const result2 = await FeeStructure.deleteOne(
     { ID },
     {
       $set: {
@@ -651,6 +696,43 @@ app.get('/displayData', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
+app.get('/displayFeeData', async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    let FeeData;
+    let formattedMonth;
+
+    if (month) {
+        // If a specific month is provided, filter FeeData by that month
+        const startDate = moment(month, 'YYYY-MM').startOf('month').toDate();
+        const endDate = moment(month, 'YYYY-MM').endOf('month').toDate();
+
+        console.log('Start Date:', startDate);
+        console.log('End Date:', endDate);
+
+        FeeData = await FeeStructure.find({
+            AddmissionDate: { $gte: startDate, $lte: endDate }
+        });
+
+        // Format the selectedMonth to display the month name
+        formattedMonth = moment(month, 'YYYY-MM').format('MMMM');
+        console.log('Filtered FeeData:', FeeData);
+    } else {
+        // If no specific month is provided, fetch all FeeData
+        FeeData = await Student.find({});
+    }
+
+    console.log('Final FeeData Array:', FeeData);
+
+    res.render('displayData', { FeeData, selectedMonth: formattedMonth }); // Pass formattedMonth to the template
+  } catch (error) {
+    console.error('Error fetching FeeData:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 
 

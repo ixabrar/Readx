@@ -5,331 +5,356 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css?family=Roboto');
-
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #e8e8e8;
-        }
-
         * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
-        .header {
-            height: 55px;
-            background-color: #2F1847;
-            ;
-        }
-
-        #log-out button {
-            height: 40px;
-            width: 100px;
-            background-color: beige;
-            float: right;
-            margin: 7px 10px 0px 0px;
-            transition: background-color 0.3s;
-            /* Add transition for smooth effect */
-        }
-
-        #log-out button:hover {
-            cursor: pointer;
-            background-color: lightgoldenrodyellow;
-            /* Change color on hover */
-        }
-
-        i {
-            margin-right: 10px;
-        }
-
-        h2 {
-            margin: 0px;
-        }
-
-        h6 {
-            margin: 0px;
-            color: #777;
+        body {
+            font-family: Arial, sans-serif;
         }
 
         .main {
             display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
         }
 
-        #accordian {
-            background-image: linear-gradient(to right, #3c4278, #3270a6);
-            width: 250px;
+        .cars-container {
+            display: flex;
+        }
+
+        .box {
+            height: 400px;
+            width: 300px;
+            background-color: #f7f7f7;
+            margin: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .box:hover {
+            transform: scale(1.05);
+        }
+
+        .img {
+            height: 200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .car-no {
             padding: 10px;
-            float: left;
-            height: auto;
-            overflow-x: hidden;
-            position: relative;
-            padding-right: 0px;
-
+            text-align: center;
+            font-size: 18px;
         }
 
-        .logininfo {
-            height: 265px;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
+        .log-btn {
+            text-align: center;
+            margin-top: 10px;
         }
 
-        .logininfo img {
-            height: 170px;
-            margin: 6px -8px;
-            border-radius: 50%;
-        }
-
-        .main-navbar {
-            position: relative;
-        }
-
-        #accordian li {
-            list-style-type: none;
+        .log-btn input {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
         }
 
-        #accordian ul li a {
-            text-decoration: none;
-            font-size: 15px;
-            line-height: 45px;
+        .log-btn input:hover {
+            background-color: #2980b9;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 600px;
+            width: 600px;
+            border-radius: 15px;
+        }
+
+        /* Popup Form Styles */
+        .popup-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            width: 400px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .popup-form .popup-header {
+            margin-bottom: 20px;
+        }
+
+        .popup-form label {
             display: block;
-            padding: 0px 20px;
-            transition-duration: 0.6s;
-            transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            position: relative;
-            color: white;
+            margin-bottom: 15px;
         }
 
-        #accordian>ul>li.active>a {
-            color: #20283e;
-            background-color: transparent;
-            transition: all 0.7s;
+        .popup-form input {
+            width: calc(100% - 20px);
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
 
-
-        #accordian a:not(:only-child):after {
-            content: "\f105";
-            position: absolute;
-            right: 20px;
-            top: 10%;
-            font-size: 14px;
-            font-family: "Font Awesome 5 Free";
-            display: inline-block;
-            padding-right: 3px;
-            vertical-align: middle;
-            font-weight: 900;
-            transition: 0.5s;
+        .popup-form button {
+            width: calc(100% - 20px);
+            padding: 15px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 18px;
+            box-sizing: border-box;
         }
 
-        #accordian .active>a:not(:only-child):after {
-            transform: rotate(90deg);
+        .popup-form button:hover {
+            background-color: #2980b9;
         }
 
-        .selector-active {
-            width: 100%;
-            display: inline-block;
-            position: absolute;
-            height: 37px;
-            top: 0px;
-            left: 0px;
-            transition-duration: 0.6s;
-            transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            background-color: #e8e8e8;
-            border-top-left-radius: 50px;
-            border-bottom-left-radius: 50px;
-        }
-
-        .selector-active .top,
-        .selector-active .bottom {
-            position: absolute;
-            width: 25px;
-            height: 25px;
-            background-color: #e8e8e8;
-            right: 0;
-        }
-
-        .selector-active .top {
-            top: -25px;
-        }
-
-        .selector-active .bottom {
-            bottom: -25px;
-        }
-
-        .selector-active .top:before,
-        .selector-active .bottom:before {
-            content: '';
-            position: absolute;
-            width: 50px;
-            height: 50px;
+        .popup-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
             border-radius: 50%;
-            background-color: #3270a6;
+            margin-bottom: 20px;
         }
 
-        .selector-active .top:before {
-            left: -25px;
-            top: -25px;
-        }
 
-        .selector-active .bottom:before {
-            bottom: -25px;
-            left: -25px;
-        }
+        popup-form {
+        /* ... Existing styles ... */
+        background: linear-gradient(45deg, #3498db, #2980b9); /* Gradient background */
+        color: #fff; /* Text color */
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Slightly darker box-shadow */
+    }
 
-        .mainbody {
-            width: 100%;
-        }
+    .popup-form .popup-header {
+        /* ... Existing styles ... */
+        color: #fff; /* Header text color */
+    }
 
-        #frame {
-            height: 850px;
-            width: 100%;
-        }
+    .popup-form label {
+        /* ... Existing styles ... */
+        color: #fff; /* Label text color */
+    }
+
+    .popup-form input {
+        /* ... Existing styles ... */
+        color: #333; /* Input text color */
+        background-color: #fff; /* Input background color */
+    }
+
+    .popup-form button {
+        /* ... Existing styles ... */
+        background-color: #fff; /* Button background color */
+        color: #3498db; /* Button text color */
+    }
+
+    .popup-form button:hover {
+        background-color: #2980b9; /* Button hover background color */
+        color: black;
+    }
+
+    .popup-image {
+        border: 5px solid #fff; /* White border around the image */
+    }
+    #buttons{
+width: 43px;
+height: 41px;
+margin-left: 92%;
+margin-top: -18px;
+border-radius: 50%;
+    }
+
+    
     </style>
     <script>
-        $(document).ready(function () {
-            // Handle click events on menu items
-            $("#accordian").on("click", "li", function (e) {
-                e.preventDefault(); // Prevent default link behavior
-                var pageURL = $(this).find('a').attr('href'); // Get the page URL from the clicked item
-
-                // Load the content dynamically into the content div
-                $('#content').fadeOut('fast', function () {
-                    $(this).load(pageURL, function () {
-                        $(this).fadeIn('fast');
-                    });
-                });
+         
+         $(document).ready(function () {
+            $("#box1").click(function () {
+                // Set a hidden input value or use an AJAX request to send the information to the server
+                // In this example, let's use a hidden input field with the name "selectedDatabase"
+                $("input[name='selectedDatabase']").val("box1");
+                // Trigger the form submission
+                $("form#loginForm").submit();
             });
 
-            // Rest of your existing JavaScript code here
-            // ---------vertical-menu with-inner-menu-active-animation-----------
-            var tabsVerticalInner = $('#accordian');
-            var selectorVerticalInner = $('#accordian').find('li').length;
-            var activeItemVerticalInner = tabsVerticalInner.find('.active');
-            var activeWidthVerticalHeight = activeItemVerticalInner.innerHeight();
-            var activeWidthVerticalWidth = activeItemVerticalInner.innerWidth();
-            var itemPosVerticalTop = activeItemVerticalInner.position();
-            var itemPosVerticalLeft = activeItemVerticalInner.position();
-            $(".selector-active").css({
-                "top": itemPosVerticalTop.top + "px",
-                "left": itemPosVerticalLeft.left + "px",
-                "height": activeWidthVerticalHeight + "px",
-                "width": activeWidthVerticalWidth + "px"
+            $("#box2").click(function () {
+                $("input[name='selectedDatabase']").val("box2");
+                $("form#loginForm").submit();
             });
-
-            $("#accordian").on("click", "li", function (e) {
-                $('#accordian ul li').removeClass("active");
-                $(this).addClass('active');
-                var activeWidthVerticalHeight = $(this).innerHeight();
-                var activeWidthVerticalWidth = $(this).innerWidth();
-                var itemPosVerticalTop = $(this).position();
-                var itemPosVerticalLeft = $(this).position();
-                $(".selector-active").css({
-                    "top": itemPosVerticalTop.top + "px",
-                    "left": itemPosVerticalLeft.left + "px",
-                    "height": activeWidthVerticalHeight + "px",
-                    "width": activeWidthVerticalWidth + "px"
-                });
-            });
-
-            var path = window.location.pathname.split("/").pop();
-            if (path === '') {
-                path = 'index.hbs';
-            }
-            var target = $('#accordian ul li a[href="' + path + '"]');
-            target.parent().addClass('active');
         });
 
-        function change(name) {
-            update(name);
-        }
-
-        function update(name) {
-            var i = name;
-            switch (name) {
-                case "dashboard":
-                    console.log("Setting src to DASHBOARD.hbs");
-                    document.getElementById('frame').src = './dashboard'; // Use a relative path with the correct file extension
-                    break;
-
-                case "register":
-                    console.log("Setting src to registration.hbs");
-                    document.getElementById('frame').src = './register'; // Use a relative path
-                    break;
-
-                case "update":
-                    console.log("Setting src to update.hbs");
-                    document.getElementById('frame').src = './update'; // Use a relative path
-                    break;
-
-                case "view":
-                    console.log("Setting src to view.hbs");
-                    document.getElementById('frame').src = './view'; // Use a relative path
-                    break;
-                case "More":
-                    console.log("setting view to More.hbs");
-                    document.getElementById('frame').src = './More';
-                    break;
-                default:
-                    console.log("Invalid name provided");
-                    break;
+   
+        /*function checkPassword() {
+            // Get the entered password
+            var enteredPassword = document.getElementById('password').value;
+    
+            // Check passwords and open corresponding websites
+            if (enteredPassword === 'Naim@7699') {
+                window.open('https://www.youtube.com', '_blank');
+            } else if (enteredPassword === 'Junaid@7699') {
+                window.open('https://www.instagram.com', '_blank');
+            } else {
+                // Show an alert message for incorrect password
+                alert('Incorrect password. Please try again.');
             }
+    
+            // Close the popup
+            document.getElementById('popup').style.display = 'none';
+        }*/
+        function openPopup1() {
+        var popup = document.getElementById('popup1');
+        popup.style.display = 'block';
+    }
+
+    function openPopup2() {
+        var popup = document.getElementById('popup2');
+        popup.style.display = 'block';
+    }
+function closepopup1()
+{
+     var popup = document.getElementById('popup1');
+        popup.style.display = 'none';
+}
+function closepopup2()
+{
+     var popup = document.getElementById('popup2');
+        popup.style.display = 'none';
+}
+    function checkPassword1()
+    {
+        var enteredpass= document.getElementById('password').value;
+
+        if(enteredpass=="admin@123")
+        {
+            document.getElementById('form1').submit();
         }
+        else{
+            alert("entered password is wrong!!!!");
+        }
+    }
+
+    function checkPassword2()
+    {
+        var enteredpass= document.getElementById('password2').value;
+
+        if(enteredpass=="admin@1234")
+        {
+            document.getElementById('form2').submit();
+        }
+        else{
+            alert("entered password is wrong!!!!");
+        }
+    }
 
     </script>
+    
 </head>
 
 <body>
-    <div class="header">
-        <!--here the header code-->
-
-        <a href="/logout" id="log-out"><button>LOGOUT</button></a>
-
-    </div>
+   <!--/* <form action="/login" method="get">-->
     <div class="main">
-        <div id="accordian">
-            <div class="logininfo">
-                <center><img src="{{Image}}" alt="image here"></center>
-
-                <center>
-                    <p id="vihical-no">{{No}}</p>
-                </center>
-            </div>
-            <ul class="show-dropdown main-navbar">
-                <div class="selector-active">
-                    <div class="top"></div>
-                    <div class="bottom"></div>
+        <div class="cars-container">
+            <div class="box" id="box1" >
+                <div class="img">
+                    <img src="/venue.jpg" alt="">
                 </div>
-                <li class="active">
-                    <a onclick="change('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
-                </li>
-                <li>
-                    <a onclick="change('register')"><i class="far fa-address-book"></i>New Admission</a>
-                </li>
-                <li>
-                    <a onclick="change('update')"><i class="far fa-clone"></i>Update information</a>
-                </li>
-                <li>
-                    <a onclick="change('view')"><i class="far fa-calendar-alt"></i>Student Information</a>
-                </li>
+                <div class="car-no">
+                    <label for="carno"><b>MH24BR7699</b></label>
+                </div>
+               
+                    <div class="log-btn">
+                    <input type="button" value="Login" onclick="openPopup1()">
+                </div>
+            </div>
+                </form>
 
-                <li>
-                    <a onclick="change('More')"><i class="far fa-heart"></i>More</a>
-                </li>
-            </ul>
+           <div class="box"  id="box2" >
+                <div class="img">
+                    <img src="/Brezza.jpg" alt="">
+                </div>
+                <div class="car-no">
+                    <label for="carno"><b>MH24AW7699</b></label>
+                </div>
+              
+                    <div class="log-btn">
+                    <input type="button" value="Login" onclick="openPopup2()">
+                </div>
+            </div>
+            
+            </div>
         </div>
-        <div class="mainbody">
-            <iframe src="./dashboard" id="frame" frameborder="0"></iframe>
 
+        
+
+        <div class="logo">
+            <img src="/logo.png" alt="">
         </div>
     </div>
+
+      <form action="/renderoff" method="get" id="form1"></form>
+    <div id="popup1" class="popup-form">
+        <button onclick="closepopup1()"id="buttons">×</button>
+        <div class="popup-header">
+            <img src="/venue.jpg" alt="" class="popup-image">
+            <label for="password">Enter Password:</label>
+        </div>
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <button onclick="checkPassword1()">Submit</button>
+    </div>
+    </form>
+
+ <form action="/render" method="get" id="form2"></form>
+    <div id="popup2" class="popup-form">
+        <button onclick="closepopup2()" id="buttons" >×</button>
+        <div class="popup-header">
+            <img src="/Brezza.jpg" alt="" class="popup-image">
+            <label for="password">Enter Password:</label>
+        </div>
+        <input type="password" id="password2" name="password" placeholder="Password" required>
+        <button onclick="checkPassword2()">Submit</button>
+    </div>
+    </form>
+<!--</form>-->
+    
 </body>
 
 </html>

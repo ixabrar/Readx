@@ -60,10 +60,29 @@
 <body>
     <h1>Ask for Month</h1>
 
-    <form action="/displayData" method="get">
+    <form id="admissionForm"  method="get">
         <label for="admissionMonth">Filter by Admission Month:</label>
         <input type="month" id="admissionMonth" name="month">
         <button type="submit">Filter</button>
     </form>
 </body>
+<script>
+    document.getElementById('admissionForm').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+
+    // Use window.location.pathname to determine the current path
+    var currentPath = window.location.pathname;
+
+    // Set the form action based on the current path
+    if (currentPath === "/askMonth") {
+        this.action = "/displayData";
+    } else if (currentPath.startsWith("/filter/askMonth")) {
+        this.action = "/displayFeeData";
+    }
+
+    // Submit the form with the updated action
+    this.submit();
+});
+
+</script>
 </html>

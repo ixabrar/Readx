@@ -156,10 +156,26 @@ function downloadPdf()
         .close-button:hover {
             background-color: #2980b9;
         }
+        .buttons-container {
+    display: flex;
+    justify-content: space-between; /* Adjust this property as needed */
+    align-items: center; /* Align buttons vertically in the center */
+}
+
+.buttons-container button {
+    /* Add any additional styling for the buttons */
+    padding: 10px;
+    margin-right: 10px; 
+    border-radius: 10px ;
+    background-color:#3498db ;
+    color: #fff;
+    /* Adjust the spacing between buttons */
+}
     </style>
 </head>
 <body>
-    <h1>Filtered Students of {{selectedMonth}}</h1>
+{{#if students}}
+        <h1>Filtered Students of {{selectedMonth}}</h1>
     <table id="dataTable">
         <thead>
             <tr>
@@ -196,7 +212,49 @@ function downloadPdf()
             {{/each}}
         </tbody>
     </table>
-     <button onclick="downloadPdf()">Download</button><br>
-        <button onclick="downloadCSV()">Download CSV</button>
+{{/if}}
+
+  {{#if FeeData}}
+        <h1>Filtered Students of {{selectedMonth}}</h1>
+        <table id="feeStructureTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>MobNo</th>
+                    <th>AddmissionDate</th>
+                    <th>LLRType</th>
+                    <th>Total</th>
+                    <th>Deposite</th>
+                    <th>Pending</th>
+                    <th>LLFee</th>
+                    <th>DLFee</th>
+                    <th>GForm</th>
+                    <th>Balance</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                {{#each FeeData}}
+                     <td>{{this.ID}}</td>
+                    <td>{{this.Name}}</td>
+                    <td>{{this.MobNo}}</td>
+                    <td>{{this.AddmissionDate}}</td>
+                    <td>{{this.LLRType}}</td>
+                    <td>{{this.Total}}</td>
+                    <td>{{this.Deposite}}</td>
+                    <td>{{this.Pending}}</td>
+                    <td>{{this.DLFee}}</td>
+                    <td>{{this.LLFee}}</td>
+                    <td>{{this.GForm}}</td>
+                    <td>{{this.Balance}}</td>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/if}}
+    <div class="buttons-container">
+    <button onclick="downloadPdf()">Download</button>
+    <button onclick="downloadCSV()">Download CSV</button>
+</div>
 </body>
 </html>

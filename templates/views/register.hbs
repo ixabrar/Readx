@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,9 +17,9 @@
     <script src="app.js"></script>
 
     <style>
-         body {
+        body {
             font-family: 'Roboto', sans-serif;
-            background-color: #e8e8e;
+            background-color: #e8e8e8;
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -181,36 +180,45 @@
         .flex1 {
             display: flex;
         }
+
+        /* Popup styling */
+        /* Popup styling */
         .popup {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-}
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            /* Semi-transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            /* Soft shadow effect */
+            z-index: 999;
+            /* Ensure pop-up is above other content */
+            backdrop-filter: blur(8px);
+            /* Apply a blur effect to the elements behind the pop-up */
+        }
 
-.popup-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
+        .popup-content {
+            text-align: center;
+            /* Center align content */
+        }
 
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-}
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #555;
+            /* Dark gray color for close button */
+        }
 
-
+        .blur-background {
+            filter: blur(4px); /* Apply a blur effect to the background */
+        }
     </style>
 </head>
 
@@ -218,19 +226,20 @@
     <section class="signup">
         <div class="container">
             <div class="signup-content">
-                <form method="post" action="/register" id="signup-form" class="signup-form" onsubmit="submitForm(event)">
+                <form method="post" action="/register" id="signup-form" class="signup-form"
+                    onsubmit="submitForm(event)">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="ID">ID</label>
-                            <input type="text" class="form-input" name="ID" id="ID" required />
+                            <input type="text" class="form-input" name="ID" id="ID" value="{{plus1}}"readonly />
                             <label for="Name">Full name</label>
                             <input type="text" class="form-input" name="Name" id="Name" required />
                         </div>
                         <div class="form-group">
                             <label for="MobNo">Mobile Number</label>
                             <input type="text" class="form-input" name="MobNo" id="MobNo" required />
-                              <label for="EnrollNo">Enrollment Number</label>
-                            <input type="text" class="form-input" name="EnNo" value="ONLY-TRAINING"  />
+                            <label for="EnrollNo">Enrollment Number</label>
+                            <input type="text" class="form-input" name="EnNo" value="ONLY-TRAINING" />
                         </div>
                     </div>
                     <div class="form-row">
@@ -277,10 +286,10 @@
                                 <div class="select-list">
                                     <select name="LLRType" id="LLRType" required>
                                         <option value="">Select</option>
-                                        <option value="LMV">LMV</option>
-                                        <option value="LMV-TR">LMV-TR</option>
                                         <option value="MCWG / LMV">MCWG / LMV</option>
                                         <option value="MCWG / LMV-TR">MCWG / TR</option>
+                                        <option value="LMV">LMV</option>
+                                        <option value="LMV-TR">LMV-TR</option>
                                         <option value="ONLY-TRAINING">ONLY-TRAINING</option>
                                     </select>
                                 </div>
@@ -290,8 +299,8 @@
                                 <div class="select-list">
                                     <select name="Type" id="Type" required>
                                         <option value="">Select</option>
-                                        <option value="ADDITIONAL">ADDITIONAL</option>
                                         <option value="FRESH">FRESH</option>
+                                        <option value="ADDITIONAL">ADDITIONAL</option>
                                         <option value="ONLY-TRANING">ONLY-TRANING</option>
                                     </select>
                                 </div>
@@ -303,11 +312,11 @@
                                 <i class="zmdi zmdi-chevron-right"></i>Additional info
                             </a>
                             <div class="add_info" id="add_info">
-                               
+
                                 <div class="form-row">
                                     <div class="form-group">
-                                         <label for="Total">Total Fees</label>
-                                    <input type="text" class="form-input" name="Total" id="Total" required />
+                                        <label for="Total">Total Fees</label>
+                                        <input type="text" class="form-input" name="Total" id="Total" required />
                                         <label for="Deposite">Deposited Fee</label>
                                         <input type="text" class="form-input" name="Deposite" id="Deposite"
                                             onblur="Pendingfee()" required />
@@ -333,62 +342,58 @@
             </div>
         </div>
         </div>
-       
+
     </section>
-        <div id="popup" class="popup">
+    <div id="popup" class="popup">
         <div class="popup-content">
             <span class="close" onclick="closePopup()">&times;</span>
             <p>Data Submitted Successfully!!</p>
         </div>
     </div>
-   <script>
-  async function submitForm() {
-    try {
-      const response = await fetch('/deleteForm', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // ... your form data here ...
-        }),
-      });
+    <script>
+        async function submitForm() {
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        // ... your form data here ...
+                    }),
+                });
 
-      const responseData = await response.json();
+                const responseData = await response.json();
+                handleRegistrationResponse(responseData);
+            } catch (error) {
+                console.error('Error during form submission:', error);
+                // Handle error or show a different message if needed
+            }
+        }
 
-      if (responseData.success) {
-        openPopup(responseData.message); // Pass the message to openPopup
-      } else {
-        console.error('Server response indicates failure:', responseData.message);
-        // Handle error or show a different message if needed
-      }
-    } catch (error) {
-      console.error('Error during form submission:', error);
-      // Handle error or show a different message if needed
-    }
-  }
 
-  function openPopup(message) {
-    var popup = document.getElementById("popup");
-    var popupContent = document.querySelector(".popup-content p");
 
-    popupContent.textContent = message; // Set the message in the popup
-    popup.style.display = "block";
-  }
+        function openPopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "block";
+            document.querySelector(".signup").classList.add("blur-background");
 
-  function closePopup() {
-    var popup = document.getElementById("popup");
-    popup.style.display = "none";
-    document.getElementById('fetchForm').reset();
-  }
+        }
+
+        function closePopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+            document.querySelector(".signup").classList.remove("blur-background");
+            document.getElementById('signup-form').reset();
+        }
 
         $(document).ready(function () {
             // Initialize the datepicker
-        $("#add_date").datepicker({
-            dateFormat: "dd-mm-yy",
-            showButtonPanel: true,
-            changeMonth: true,
-            changeYear: true
+            $("#add_date").datepicker({
+                dateFormat: "dd-mm-yy",
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true
             });
 
 
@@ -426,12 +431,15 @@
                 }
             });
 
-            
 
-                
- });
 
-           function Pendingfee() {
+
+        });
+
+
+
+
+        function Pendingfee() {
             var Totalfee = document.getElementById('Total').value;
             var Deposite = document.getElementById('Deposite').value;
 
@@ -457,16 +465,17 @@
             }
         }
 
-      function submitForm(event) {
-        event.preventDefault(); // Prevent the default form submission
+        function submitForm(event) {
+            event.preventDefault(); // Prevent the default form submission
 
-        const formData = new FormData(event.target); // Get form data
-        const data = Object.fromEntries(formData.entries()); // Convert FormData to object
+            const formData = new FormData(event.target); // Get form data
+            const data = Object.fromEntries(formData.entries()); // Convert FormData to object
 
-        console.log(data); // Log the form data before submission
-        event.target.submit();
+            console.log(data); // Log the form data before submission
+            event.target.submit();
 
- }
-</script>
+        }
+    </script>
 </body>
+
 </html>
