@@ -436,22 +436,6 @@ app.get('/viewAll', async (req, res) => {
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
-app.get('/AllFee', async (req, res) => {
-  try {
-    const data = await FeeStructure.find(); // Fetch all data from MongoDB
-
-    if (data.length > 0) {
-      console.log(data); // Log the data retrieved from MongoDB
-      res.render('allFEE', { data }); // Render the allData.hbs template with the retrieved data
-    } else {
-      console.log('No data found in the database');
-      res.status(404).send('No data found');
-    }
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).send('Server Error');
-  }
-});
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post('/view', async (req, res) => {
   const { ID, MobNo } = req.body;

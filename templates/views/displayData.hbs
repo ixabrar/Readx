@@ -7,89 +7,7 @@
      <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-        
- function downloadCSV() {
-            const table = document.getElementById('dataTable');
-            const rows = table.querySelectorAll('tr');
 
-            // Create a CSV file content
-            const csvContent = Array.from(rows, row => {
-                const cols = row.querySelectorAll('td,th');
-                return Array.from(cols, col => col.innerText).join(',');
-            }).join('\n');
-
-            // Create a Blob and create a download link
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.download = 'table_data.csv';
-            link.click();
-        }
-
-
-function downloadPdf() 
-{
-        if (typeof pdfMake !== 'undefined') {
-    const data = [];
-    const table = document.getElementById('dataTable');
-
-    // Limit the number of rows to 10
-    const numRows = table.rows.length;
-
-
-    // Define the font size for the table cells (e.g., 8)
-    const cellFontSize = 7;
-
-    // Iterate over rows
-    for (let i = 0; i < numRows; i++) {
-        const row = table.rows[i];
-        const rowData = [];
-
-        // Iterate over cells
-        for (let j = 0; j < row.cells.length; j++) {
-            const cellText = row.cells[j].innerText;
-
-            // Check if it's the first row to make it bold
-            const fontWeight = i == 0 ? 'bold' : 'normal';
-
-            // Check if the cell text is defined
-            if (typeof cellText !== 'undefined') {
-                rowData.push({ text: cellText, fontSize: cellFontSize, bold: fontWeight });
-            } else {
-                // If the cell text is undefined, push an empty string
-                rowData.push({ text: '', fontSize: cellFontSize, bold: fontWeight });
-            }
-        }
-
-        data.push(rowData);
-    }
-
-    // Ensure that there is data
-    if (data.length > 0) {
-        const docDefinition = {
-            content: [
-                {
-                    table: {
-                        headerRows: 1,
-                        body: data,
-                        fontSize: cellFontSize, // Set the font size for the entire table
-                    },
-                },
-            ],
-        };
-
-        pdfMake.createPdf(docDefinition).download('table_data.pdf');
-    } else {
-        console.error('No data found in the table.');
-    }
-} else {
-    console.error('pdfMake library is not loaded.');
-}
-
-
-        }
-    </script>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -169,6 +87,7 @@ function downloadPdf()
     border-radius: 10px ;
     background-color:#3498db ;
     color: #fff;
+    cursor: pointer;
     /* Adjust the spacing between buttons */
 }
     </style>
@@ -202,7 +121,7 @@ function downloadPdf()
                     <td>{{this.LicenceNo}}</td>
                     <td>{{this.LLRType}}</td>
                     <td>{{this.Type}}</td>
-                    <td>{{this.AddmissionDate}}</td>
+                    <td>{{formatDate AddmissionDate}}</td>
                     <td>{{this.Total}}</td>
                     <td>{{this.Deposite}}</td>
                     <td>{{this.Pending}}</td>
@@ -216,45 +135,139 @@ function downloadPdf()
 
   {{#if FeeData}}
         <h1>Filtered Students of {{selectedMonth}}</h1>
-        <table id="feeStructureTable">
-            <thead>
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>MobNo</th>
+                <th>LLRType</th>
+                <th>AddmissionDate</th>
+                <th>Total</th>
+                <th>Deposite</th>
+                <th>Pending</th>
+                <th>LLFee</th>
+                <th>DLFee</th>
+                <th>GForm</th>
+                <th>Balance</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            {{#each FeeData}}
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>MobNo</th>
-                    <th>AddmissionDate</th>
-                    <th>LLRType</th>
-                    <th>Total</th>
-                    <th>Deposite</th>
-                    <th>Pending</th>
-                    <th>LLFee</th>
-                    <th>DLFee</th>
-                    <th>GForm</th>
-                    <th>Balance</th>
-                   
-                </tr>
-            </thead>
-            <tbody>
-                {{#each FeeData}}
-                     <td>{{this.ID}}</td>
+                    <td>{{this.ID}}</td>
                     <td>{{this.Name}}</td>
                     <td>{{this.MobNo}}</td>
-                    <td>{{this.AddmissionDate}}</td>
                     <td>{{this.LLRType}}</td>
+                    <td>{{formatDate AddmissionDate}}</td>
                     <td>{{this.Total}}</td>
                     <td>{{this.Deposite}}</td>
                     <td>{{this.Pending}}</td>
-                    <td>{{this.DLFee}}</td>
                     <td>{{this.LLFee}}</td>
+                    <td>{{this.DLFee}}</td>
                     <td>{{this.GForm}}</td>
                     <td>{{this.Balance}}</td>
-                {{/each}}
-            </tbody>
-        </table>
-    {{/if}}
+
+                    
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+{{/if}}
     <div class="buttons-container">
     <button onclick="downloadPdf()">Download</button>
     <button onclick="downloadCSV()">Download CSV</button>
 </div>
+<script>
+    function formatDate(isoDate) {
+            const date = new Date(isoDate);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            return formattedDate;
+        }
+         function downloadCSV() {
+            const table = document.getElementById('dataTable');
+            const rows = table.querySelectorAll('tr');
+
+            // Create a CSV file content
+            const csvContent = Array.from(rows, row => {
+                const cols = row.querySelectorAll('td,th');
+                return Array.from(cols, col => col.innerText).join(',');
+            }).join('\n');
+
+            // Create a Blob and create a download link
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.download = 'table_data.csv';
+            link.click();
+        }
+
+
+function downloadPdf() 
+{
+        if (typeof pdfMake !== 'undefined') {
+    const data = [];
+    const table = document.getElementById('dataTable');
+
+    // Limit the number of rows to 10
+    const numRows = table.rows.length;
+
+
+    // Define the font size for the table cells (e.g., 8)
+    const cellFontSize = 7;
+
+    // Iterate over rows
+    for (let i = 0; i < numRows; i++) {
+        const row = table.rows[i];
+        const rowData = [];
+
+        // Iterate over cells
+        for (let j = 0; j < row.cells.length; j++) {
+            const cellText = row.cells[j].innerText;
+
+            // Check if it's the first row to make it bold
+            const fontWeight = i == 0 ? 'bold' : 'normal';
+
+            // Check if the cell text is defined
+            if (typeof cellText !== 'undefined') {
+                rowData.push({ text: cellText, fontSize: cellFontSize, bold: fontWeight });
+            } else {
+                // If the cell text is undefined, push an empty string
+                rowData.push({ text: '', fontSize: cellFontSize, bold: fontWeight });
+            }
+        }
+
+        data.push(rowData);
+    }
+
+    // Ensure that there is data
+    if (data.length > 0) {
+        const docDefinition = {
+            content: [
+                {
+                    table: {
+                        headerRows: 1,
+                        body: data,
+                        fontSize: cellFontSize, // Set the font size for the entire table
+                    },
+                },
+            ],
+        };
+
+        pdfMake.createPdf(docDefinition).download('table_data.pdf');
+    } else {
+        console.error('No data found in the table.');
+    }
+} else {
+    console.error('pdfMake library is not loaded.');
+}
+
+
+        }
+</script>
 </body>
 </html>
