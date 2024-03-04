@@ -82,21 +82,7 @@ app.get("/admin",(req,res)=>{
   res.render("admin");
 });
 
-/*
-app.get("/testing",(req,res)=>{
-  try {
-    // Query the database to get the total number of students
-    const totalStudents = await Student.countDocuments();
-    
-    // Render the dashboard template with the totalStudents data
-    res.render('dashboard', { totalStudents });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Internal Server Error');
-  }
 
-});
-*/
 
 hbs.registerHelper('formatDate', function (date) {
   return moment(date).format('DD-MM-YYYY');
@@ -420,7 +406,7 @@ app.get('/viewAll', async (req, res) => {
 
     if (data.length > 0) {
       console.log(data); // Log the data retrieved from MongoDB
-      res.render('allData', { data }); // Render the allData.hbs template with the retrieved data
+      res.render('AllData', { data }); // Render the allData.hbs template with the retrieved data
     } else {
       console.log('No data found in the database');
       res.status(404).send('No data found');
