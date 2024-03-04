@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon src/app.js -e js,hbs",
+    "dev": "node src/app.js",
     "start": "node src/app.js"
-    
-  },
+ },
+ 
   "keywords": [],
   "author": "",
   "license": "ISC",
