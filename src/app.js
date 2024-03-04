@@ -30,11 +30,7 @@ app.set("views", templates_path);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Twilio setup
-const accountSid = 'ACd3ba529cae4742cb74b059674de7d1f5';
-const authToken = 'b835d317fb90290e0c7945c11d3f7b6c';
-const twilioClient = twilio(accountSid, authToken);
-const twilioPhoneNumber = '+12406859764'; // Your Twilio phone number
+
 
 
 app.get("/", (req, res) => {
