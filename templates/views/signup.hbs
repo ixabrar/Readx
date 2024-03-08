@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+ <title>WHEELDATA</title>
+    <link rel="icon"  href="./favicon.png" type="image/x-icon">
+</head>
+<body>
+
+  <header class="bg-dark text-white">
+    <div class="container">
+      <div class="logo">Your Logo</div>
+      <nav>
+        <ul class="nav">
+          <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="signup-container container mt-5">
+      <h2 class="text-center mb-4">Create an Account</h2>
+      <form action="/signup" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="fullname">Full Name:</label>
+          <input type="text" class="form-control" id="fullname" name="username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="Connectio-string">CONNECTION STRING 1:</label>
+            <input type="text" class="form-control" id="password" name="CON1" required>
+          </div>
+          <div class="form-group">
+            <label for="Connectio-string">CONNECTION STRING 2:</label>
+            <input type="text" class="form-control" id="password" name="CON2" required>
+          </div>
+          <div class="form-group">
+            <label for="Connectio-string">CONNECTION STRING 3:</label>
+            <input type="text" class="form-control" id="password" name="CON3" required>
+          </div>
+          <div class="form-group">
+            <label for="Connectio-string">CONNECTION STRING 4:</label>
+            <input type="text" class="form-control" id="password" name="CON4" required>
+          </div>
+          <div class="form-group">
+           <label for="no">NO:</label>
+            <input type="number" class="form-control" id="no" name="NO" required>
+          </div>
+          <div class="form-group">
+             <label for="image">Image:</label>
+            <input type="file" class="form-control-file" id="image" name="Image" required>
+           </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Sign Up</button>
+      </form>
+    </div>
+  </main>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

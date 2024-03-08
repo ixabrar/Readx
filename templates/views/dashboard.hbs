@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chart Example</title>
+    <title>WHEELDATA</title>
+    <link rel="icon"  href="./favicon.png" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto&display=swap">
 
@@ -180,13 +180,14 @@
             </div>
         </div>
     </div>
-    <script>
-
+    <script defer>
+        
+    // Checking the values of the variables
         // Assuming the server side passes the data correctly to these variables
-        const doughnutLabels = {{ json doughnutLabels }};
-        const doughnutValues = {{ json doughnutValues }};
-        const barLabels = {{ json barLabels }};
-        const barValues = {{ json barValues }};
+        const doughnutLabels = {{{ json doughnutLabels }}};
+        const doughnutValues = {{{ json doughnutValues }}};
+        const barLabels = {{{ json barLabels }}};
+        const barValues = {{{ json barValues }}};
 
         // Doughnut Chart
         const doughnutCtx = document.getElementById('myDoughnutChart').getContext('2d');

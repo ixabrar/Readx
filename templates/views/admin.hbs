@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>WHEELDATA</title>
+    <link rel="icon"  href="./favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -192,6 +193,12 @@
             height: 850px;
             width: 100%;
         }
+        #logo {
+            height: 113%;
+            width: 11%;
+            margin-left: 20px;
+            margin-top: -4px;
+        }
     </style>
     <script>
         $(document).ready(function () {
@@ -254,14 +261,15 @@
         function update(name) {
             var i = name;
             switch (name) {
-                case "dashboard":
+                case "Dashboard":
                     console.log("Setting src to DASHBOARD.hbs");
-                    document.getElementById('frame').src = './dashboard'; // Use a relative path with the correct file extension
+                    document.getElementById('frame').src = './Dashboard'; // Use a relative path with the correct file extension
                     break;
 
                 case "register":
                     console.log("Setting src to registration.hbs");
-                    document.getElementById('frame').src = './register'; // Use a relative path
+                    document.getElementById('frame').src = './register'; 
+                    // Use a relative path
                     break;
 
                 case "update":
@@ -288,17 +296,17 @@
 
 <body>
     <div class="header">
-        <!--here the header code-->
+        <img id="logo" src="./CPP.png">
         <a href="/logout" id="log-out"><button>LOGOUT</button></a>
 
     </div>
     <div class="main">
         <div id="accordian">
             <div class="logininfo">
-                <center><img src="{{Image}}" alt="image here"></center>
+                <center><img src="{{ Image }}" alt="image here"></center>
 
                 <center>
-                    <p id="vihical-no">{{No}}</p>
+                    <p id="vihical-no">{{ No }}</p>
                 </center>
             </div>
             <ul class="show-dropdown main-navbar">
@@ -307,7 +315,7 @@
                     <div class="bottom"></div>
                 </div>
                 <li class="active">
-                    <a onclick="change('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                    <a onclick="change('Dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
                 </li>
                 <li>
                     <a onclick="change('register')"><i class="far fa-address-book"></i>New Admission</a>
@@ -325,7 +333,7 @@
             </ul>
         </div>
         <div class="mainbody">
-            <iframe src="./dashboard" id="frame" frameborder="0"></iframe>
+            <iframe src="./Dashboard" id="frame" frameborder="0"></iframe>
 
         </div>
     </div>

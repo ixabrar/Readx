@@ -1,125 +1,72 @@
-const express = require("express");
-const app = express();
-const path = require("path");
-const hbs = require("hbs");
+const express = require('express');
 const bodyParser = require('body-parser');
-const mongoose = require("mongoose");
-const moment = require('moment');
-const twilio =require('twilio');
-app.use(express.static('public'));
-
-/////////////////////////////////////
+const mongoose = require('mongoose');
+const multer = require('multer');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const connection = require('./db/connection');
-/////////////////////////////////////
+const path = require("path");
+const app = express();
+const hbs = require("hbs");
+const moment = require('moment');
+app.use(express.static('public'));
+const port = process.env.PORT || 4000;
 
-require("./db/connection");
+const { Student, FeeStructure, userModel } = require('./models/user');
 
-//const Register = require("./models/register");
-//const Student = require("./models/register");
-const { Student, FeeStructure } = require("./models/register");
-
-const port = process.env.PORT || 3000;
-
+// Setup Express Handlebars
 const static_path = path.join(__dirname, "../public");
 const templates_path = path.join(__dirname, "../templates/views");
 
 app.use(express.static(static_path));
 app.set("view engine", "hbs");
 app.set("views", templates_path);
-
-
-app.use(bodyParser.urlencoded({ extended: true }));
-
-
-
-
-app.get("/", (req, res) => {
-  res.render("index");
- 
-});
-
-app.get("/render", async (req, res) => {
-  console.log('Accessed /render route');
-  const Image = '/Brezza.jpg';
-  const No='MH24AW7699';
-  try {
-      // Specify the new connection string dynamically
-      await connection.connectToDatabase("mongodb+srv://AbrarShaikh:Andy%40998@cpp.csyvxe0.mongodb.net/GULSHAN_2024");
-
-      // Access the current connection string
-      console.log('Current connection string:', connection.getConnectionString());
-
-      // Render your view or perform other actions
-      res.render("admin",{Image,No});
-  } catch (error) {
-      console.error('Connection failed:', error);
-      // Handle the error or render an error page
-      res.status(500).send('Internal Server Error');
-  }
-});
-
-app.get("/renderoff", async (req, res) => {
-  console.log('Accessed /render route');
-  const Image = '/venue.jpg';
-  const No='MH24BR7699';
-  try {
-      // Specify the new connection string dynamically
-      await connection.connectToDatabase("mongodb+srv://Junaid_Shaikh:Gulshan%40Junaid@cluster0.dgrgpxv.mongodb.net/GMDS");
-
-      // Access the current connection string
-      console.log('Current connection string:', connection.getConnectionString());
-
-      // Render your view or perform other actions
-      res.render("admin",{Image,No});
-  } catch (error) {
-      console.error('Connection failed:', error);
-      // Handle the error or render an error page
-      res.status(500).send('Internal Server Error');
-  }
-});
-////////////////////////////////////////////
-app.get("/admin",(req,res)=>{
-  res.render("admin");
-});
-
-
-
 hbs.registerHelper('formatDate', function (date) {
   return moment(date).format('DD-MM-YYYY');
 });
 
-app.get("/register", async (req, res) => {
-  try{
-
-    const totalno =await Student.aggregate([
-      {
-        $group: {
-          _id: null,       
-          totalCount: { $sum: 1 }  
-        }
-      }
-    ]);
-
-    const totalStudentCount = totalno[0].totalCount;
-    const plus1=totalStudentCount+1;
+// Middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(session({
+    secret: 'thisisrandomstuff',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 100 * 60 * 1000 // 100 minutes
+    }
+}));
 
 
-    res.render("register",{plus1});
-  } catch (error) {
-    console.error('Error retrieving data:', error);
-    res.status(500).send('Server Error');
+// Session checker middleware
+var sessionChecker = (req, res, next) => {
+  console.log("inside the middleware");
+  if (req.session.user || req.cookies.user_sid) {
+      res.render('index');
+  } else {
+      next();
   }
-  
-});
+};
 
-app.get("/login", (req, res) => {
-  res.render("login");
-});
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Routes
+app.get('/',  (req, res) => {
+    res.redirect('/login');
+});
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+app.get('/register', (req, res) => {
+  res.render('register');
+});
+app.get('/askMonth', (req, res) => {
+  res.render('askMonth');
+});
 app.get("/filter/askMonth", (req, res) => {
   res.render("askMonth");
 });
-
 app.get("/view", (req, res) => {
   res.render("view");
 });
@@ -138,19 +85,174 @@ app.get('/searchData', (req, res) => {
 app.get("/delete",(rqs , res )=> {
   res.render('delete');
 });
-app.get("/test",(rqs , res )=> {
-  res.render('test');
-});
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/logout',(req,res)=>{
-  res.render("index");
-});
-//////////////////////////////////////////
-hbs.registerHelper('json', function(context) {
-  return new hbs.SafeString(JSON.stringify(context));
+//
+app.get('/index',  (req, res) => {
+  console.log('inside the index get request');
+  if (req.session.user || req.cookies.user_sid) {
+      res.render('index', { user: req.session.user });
+      console.log('index page rendered');
+  } else {
+      res.redirect('/login');
+  }
 });
 
-app.get('/dashboard', async (req, res) => {
+const storage = multer.memoryStorage(); // Stores files in memory
+const upload = multer({ storage: storage });
+
+app.get('/signup', sessionChecker, (req, res) => {
+    res.render('signup');
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for signup route
+app.post('/signup', upload.single('Image'), async (req, res) => {
+    try {
+      // req.file contains the image. Convert image to a format that can be saved in MongoDB
+    const img = {
+      data: req.file.buffer,
+      contentType: req.file.mimetype,
+    };
+    const newUser = new User({
+      username: req.body.username,
+      email: req.body.email,
+      password: req.body.password, // Ensure you hash this before saving
+      Conn1: req.body.Conn1,
+      Conn2: req.body.Conn2,
+      Conn3: req.body.Conn3,
+      Conn4: req.body.Conn4,
+      NO: req.body.NO,
+      Image: img, // This matches the corrected schema
+    });
+    
+
+        const savedUser = await newUser.save();
+        console.log(savedUser);
+        console.log('no is ',no);
+        console.log('Image is ',img);
+        req.session.user = savedUser;
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.redirect('/signup');
+    }
+});
+
+app.get('/Admin', async (req, res) => {
+  if (req.session.user || req.cookies.user_sid) {
+      // Retrieve No and Image from the session
+      const No = app.locals.No
+      const Image = app.locals.Image;
+      console.log('no is :',No);
+      // Pass No and Image along with the user to the view
+      res.render('Admin', { No, Image});
+      // Clear them from the session if you don't need them afterwards
+     
+  } else {
+      res.redirect('/login');
+  }
+});
+
+mongoose.connect('mongodb+srv://Gcreatix:AR%237587@users.dxsrar7.mongodb.net/USERS')
+  .then(() => {
+    console.log('Connected to MongoDB');
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for login routes
+    app.route("/login")
+    .get(sessionChecker, (req, res) => {
+      res.sendFile(__dirname + "/templates/views/login.hbs");
+    })
+    .post(async (req, res) => {
+      var username = req.body.username;
+      var password = req.body.password;
+  
+      try {
+        var user = await userModel.findOne({ username: username });
+        if (!user || !(await user.comparePassword(password))) {
+          return res.redirect("/login");
+        }
+  
+        // Set user information in the session
+        req.session.user = user;
+  
+        console.log('User Session:', req.session.user);
+         app.locals.con1 = user.Conn1;
+         app.locals.con2 = user.Conn2;
+         app.locals.con3 = user.Conn3;
+         app.locals.con4 = user.Conn4;
+         app.locals.Image = user.Image;
+         app.locals.No =user.No;
+        console.log("retrieved Connection string 1:", app.locals.con1);
+        console.log("retrieved Connection string 2:", app.locals.con3);
+        console.log("retrieved Connection string 3:", app.locals.con3);
+        console.log("retrieved Connection string 4:", app.locals.con4);
+        console.log("retrieved Image:", app.locals.Image);
+        console.log("retrieved Number:", app.locals.No);
+        mongoose.connection.close();
+        console.log('Default connection clsoed');
+        console.log("Redirecting to the index");
+        res.redirect('/index');
+      } catch (err) {
+        console.error(err);
+        res.redirect("/login");
+      }
+    });
+  
+
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err.message);
+  });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//index page routes  
+  app.get("/render", async (req, res) => {
+    console.log('Accessed /render route');
+   
+    try {
+        console.log('inside the try block of the /render route');
+        const con1 = app.locals.con1
+        await connection.connectToDatabase(con1);
+  
+        // Access the current connection string
+        console.log('Current connection string:', connection.getConnectionString());
+  
+        // Render your view or perform other actions
+        res.redirect("/Admin");
+    } catch (error) {
+        console.error('Connection failed:', error);
+        // Handle the error or render an error page
+        res.status(500).send('Internal Server Error');
+    }
+  });
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  app.get("/renderoff", async (req, res) => {
+    console.log('Accessed /render route');
+    const Image = '/venue.jpg';
+    const No='MH24BR7699';
+    try {
+        // Specify the new connection string dynamically
+        await connection.connectToDatabase(con2);
+  
+        // Access the current connection string
+        console.log('Current connection string:', connection.getConnectionString());
+  
+        // Render your view or perform other actions
+        res.redirect("/Admin");
+    } catch (error) {
+        console.error('Connection failed:', error);
+        // Handle the error or render an error page
+        res.status(500).send('Internal Server Error');
+    }
+  });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//dashboard page route
+hbs.registerHelper('json', function (context) {
+  return JSON.stringify(context);
+});
+app.get('/Dashboard', async (req, res) => {
   try {
 
     const totalno =await Student.aggregate([
@@ -252,7 +354,8 @@ const barValues = barChartData
   .filter(item => item._id.month !== null && item._id.year !== null)
   .map(item => item.count);
 
-  console.log(`Total Number of Students: ${totalStudentCount}`);
+  console.log('Total Number of Students:' ,totalStudentCount);
+  console.log('Total Number of Students of current Month:' ,totalStudentsCurrentMonth);
  console.log("total pending fee:", TotalPendingFee);
     console.log('doughnutlabels:',doughnutLabels );
     console.log("doughnutValues: ", doughnutValues);
@@ -261,8 +364,8 @@ console.log('barValues:', barValues);
 
 if (result.length > 0) {
   const { grandTotal } = result[0];
-    // Passing both datasets to the template
-    res.render('dashboard',   {
+   console.log('passed the condition');
+       res.render('Dashboard',{
       totalStudentCount ,
       totalStudentsCurrentMonth,
       TotalPendingFee,
@@ -278,12 +381,35 @@ if (result.length > 0) {
     res.status(500).send('Server Error');
   }
 });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//for register route
+app.get("/register", async (req, res) => {
+  try{
 
+    const totalno =await Student.aggregate([
+      {
+        $group: {
+          _id: null,       
+          totalCount: { $sum: 1 }  
+        }
+      }
+    ]);
 
+    const totalStudentCount = totalno[0].totalCount;
+    const plus1=totalStudentCount+1;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-app.post("/register", async (req, res) => {
+    console.log('plus1 value:', plus1);
+    res.render("register",{ plus1 });
+  } catch (error) {
+    console.error('Error retrieving data:', error);
+    res.status(500).send('Server Error');
+  }
+  
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+app.post("/registernewdata", async (req, res) => {
   try {
 
     console.log("Received POST request to /register");
@@ -399,7 +525,8 @@ function calculateFees(LLRType, feeStructureData) {
   }
   feeStructureData.Balance = feeStructureData.Total - feeStructureData.Pending - feeStructureData.DLFee - feeStructureData.LLFee - feeStructureData.GForm;
 }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for viewall Route
 app.get('/viewAll', async (req, res) => {
   try {
     const data = await Student.find(); // Fetch all data from MongoDB
@@ -416,9 +543,9 @@ app.get('/viewAll', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for view route
 app.post('/view', async (req, res) => {
   const { ID, MobNo } = req.body;
 
@@ -442,7 +569,9 @@ app.post('/view', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//for update route
 app.post('/update', async (req, res) => {
   const { ID, MobNo } = req.body;
 
@@ -466,11 +595,9 @@ app.post('/update', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// helpers/handlebars-helpers.js
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for submiting the form after being updated route
 app.post("/submitform", async (req, res) => {
   try {
     const { ID, Name, MobNo, LicenceNo, LLRType, Type, AddmissionDate, Total, Deposite, Pending, MDLStatus } = req.body;
@@ -547,10 +674,10 @@ app.post("/submitform", async (req, res) => {
 
 function calculatebalance(feeData) {
   return feeData.Total - feeData.Pending - feeData.DLFee - feeData.LLFee - feeData.GForm;
-}
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
+} 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for search Data
 app.get("/searchData", async (req, res) => {
   try {
     console.log("Received GET request to /searchData");
@@ -566,8 +693,9 @@ app.get("/searchData", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-///////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for deleting the Data
 app.post("/deleteForm", async (req, res) => {
   try {
     
@@ -621,12 +749,9 @@ app.post("/deleteForm", async (req, res) => {
   }
 });
 
-
-///////////////////////////////////////////////////////////////////////////////////////////
-app.get('/askMonth', (req, res) => {
-  res.render('askMonth');
-});
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for displaying the data
 app.get('/displayData', async (req, res) => {
   try {
     const { month } = req.query;
@@ -662,7 +787,9 @@ app.get('/displayData', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//for diplaying the feedata
 app.get('/displayFeeData', async (req, res) => {
   try {
     const { month } = req.query;
@@ -698,12 +825,29 @@ app.get('/displayFeeData', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// for logout route
+app.get('/logout', (req, res) => {
+        // Ensure the mongoose connection is closed before opening a new one
+        mongoose.connection.close();
+            console.log("User-specific connection closed");
+            // Connect to the default or new MongoDB here
+            const defaultConnectionString = 'mongodb+srv://Gcreatix:AR%237587@users.dxsrar7.mongodb.net/USERS';
+            mongoose.connect(defaultConnectionString, {})
+            .then(() => {
+                console.log('Connected to default MongoDB');
+                res.redirect('/index');
+            })
+            .catch(err => {
+                console.error('Error connecting to default MongoDB:', err);
+                // Handle the connection error (e.g., redirect to an error page or login with an error message)
+                res.redirect('/login'); // Modify as needed
+            });
+        
+    });
 
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log('Server is running on port 4000');
 });
