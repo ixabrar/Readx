@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.png" type="image/x-icon">
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>WHEELDATA</title>
+    <link rel="icon"  href="./favicon.jpg" type="image/x-icon">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -16,11 +16,12 @@
 
         body {
             font-family: Arial, sans-serif;
+            zoom: 90%;
         }
 
         .main {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             align-items: center;
             height: 100vh;
         }
@@ -89,11 +90,13 @@
         .logo {
             display: flex;
             align-items: center;
+            float: right;
         }
 
         .logo img {
-            height: 600px;
-            width: 600px;
+            height: 500px;
+            width: 500px;
+            margin: 20px;
             border-radius: 15px;
         }
 
@@ -160,55 +163,222 @@
 
 
         popup-form {
-        /* ... Existing styles ... */
-        background: linear-gradient(45deg, #3498db, #2980b9); /* Gradient background */
-        color: #fff; /* Text color */
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Slightly darker box-shadow */
-    }
+            /* ... Existing styles ... */
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            /* Gradient background */
+            color: #fff;
+            /* Text color */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            /* Slightly darker box-shadow */
+        }
 
-    .popup-form .popup-header {
-        /* ... Existing styles ... */
-        color: #fff; /* Header text color */
-    }
+        .popup-form .popup-header {
+            /* ... Existing styles ... */
+            color: #fff;
+            /* Header text color */
+        }
 
-    .popup-form label {
-        /* ... Existing styles ... */
-        color: #fff; /* Label text color */
-    }
+        .popup-form label {
+            /* ... Existing styles ... */
+            color: #fff;
+            /* Label text color */
+        }
 
-    .popup-form input {
-        /* ... Existing styles ... */
-        color: #333; /* Input text color */
-        background-color: #fff; /* Input background color */
-    }
+        .popup-form input {
+            /* ... Existing styles ... */
+            color: #333;
+            /* Input text color */
+            background-color: #fff;
+            /* Input background color */
+        }
 
-    .popup-form button {
-        /* ... Existing styles ... */
-        background-color: #fff; /* Button background color */
-        color: #3498db; /* Button text color */
-    }
+        .popup-form button {
+            /* ... Existing styles ... */
+            background-color: #fff;
+            /* Button background color */
+            color: #3498db;
+            /* Button text color */
+        }
 
-    .popup-form button:hover {
-        background-color: #2980b9; /* Button hover background color */
-        color: black;
-    }
+        .popup-form button:hover {
+            background-color: #2980b9;
+            /* Button hover background color */
+            color: black;
+        }
 
-    .popup-image {
-        border: 5px solid #fff; /* White border around the image */
-    }
-    #buttons{
-width: 43px;
-height: 41px;
-margin-left: 92%;
-margin-top: -18px;
-border-radius: 50%;
-    }
+        .popup-image {
+            border: 5px solid #fff;
+            /* White border around the image */
+        }
 
-    
+        /* Your existing CSS styles */
+
+        /* Your existing CSS styles */
+
+        /* Media query for smaller devices */
+        /* Media query for smaller devices */
+        @media only screen and (max-width: 768px) {
+
+            /* Adjustments for smaller screens */
+            .header {
+                height: auto;
+            }
+
+            .logo {
+                display: none;
+            }
+
+            #log-out button {
+                float: none;
+                margin: 10px auto;
+            }
+
+            #username {
+                float: none;
+                text-align: center;
+                margin: 10px auto;
+            }
+
+            .logininfo {
+                height: auto;
+            }
+
+            .logininfo img {
+                height: 120px;
+            }
+
+            #accordian {
+                width: 100%;
+                float: none;
+            }
+
+            .main {
+                flex-direction: column;
+            }
+
+            .mainbody {
+                width: 100%;
+                overflow-x: auto;
+                /* Add horizontal scroll if needed */
+            }
+
+            #frame {
+                width: 100%;
+                height: auto;
+            }
+
+            .box {
+                height: 271px;
+                width: 180px;
+                background-color: #f7f7f7;
+                margin: 6px;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease-in-out;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .img {
+                height: 186px;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            .img img {
+                width: 100%;
+                /* Maintain full width */
+                height: 100%;
+                /* Maintain aspect ratio */
+                object-fit: cover;
+                border-radius: 10px 10px 0 0;
+                /* Adjust the border radius */
+            }
+
+            .car-no {
+                padding: 5px;
+                /* Decrease padding */
+                text-align: center;
+                font-size: 14px;
+                /* Decrease font size */
+            }
+
+            .log-btn {
+                margin-top: 5px;
+                /* Decrease margin */
+            }
+
+            .log-btn input {
+                padding: 5px 10px;
+                font-size: 14px;
+                height: auto;
+                width: 100px;
+            }
+        }
+
+        @media only screen and (min-width: 767px) and (max-width: 1020px) {
+
+            .logo img {
+                height: 300px;
+                width: 300px;
+            }
+
+            .box {
+                height: 271px;
+                width: 180px;
+                background-color: #f7f7f7;
+                margin: 6px;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease-in-out;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .car-no {
+                padding: 5px;
+                /* Decrease padding */
+                text-align: center;
+                font-size: 14px;
+                /* Decrease font size */
+            }
+
+            .log-btn {
+                margin-top: 5px;
+                /* Decrease margin */
+            }
+
+            .log-btn input {
+                padding: 5px 10px;
+                font-size: 14px;
+                height: auto;
+                width: 100px;
+            }
+
+        }
+
+
+
+
+        /* Add more media queries as needed */
+
+
+        /* Add more media queries as needed */
     </style>
     <script>
-         
-         $(document).ready(function () {
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.addEventListener('contextmenu', function (event) {
+                event.preventDefault();
+            });
+        });
+
+
+        $(document).ready(function () {
             $("#box1").click(function () {
                 // Set a hidden input value or use an AJAX request to send the information to the server
                 // In this example, let's use a hidden input field with the name "selectedDatabase"
@@ -223,8 +393,9 @@ border-radius: 50%;
             });
         });
 
-   
-        /*function checkPassword() {
+
+        /*
+        function checkPassword() {
             // Get the entered password
             var enteredPassword = document.getElementById('password').value;
     
@@ -241,99 +412,94 @@ border-radius: 50%;
             // Close the popup
             document.getElementById('popup').style.display = 'none';
         }*/
+
+
         function openPopup1() {
-        var popup = document.getElementById('popup1');
-        popup.style.display = 'block';
-    }
-
-    function openPopup2() {
-        var popup = document.getElementById('popup2');
-        popup.style.display = 'block';
-    }
-function closepopup1()
-{
-     var popup = document.getElementById('popup1');
-        popup.style.display = 'none';
-}
-function closepopup2()
-{
-     var popup = document.getElementById('popup2');
-        popup.style.display = 'none';
-}
-    function checkPassword1()
-    {
-        var enteredpass= document.getElementById('password').value;
-
-        if(enteredpass=="admin@123")
-        {
-            document.getElementById('form1').submit();
+            var popup = document.getElementById('popup1');
+            popup.style.display = 'block';
         }
-        else{
-            alert("entered password is wrong!!!!");
-        }
-    }
 
-    function checkPassword2()
-    {
-        var enteredpass= document.getElementById('password2').value;
+        function openPopup2() {
+            var popup = document.getElementById('popup2');
+            popup.style.display = 'block';
+        }
+        function closepopup2() {
+            var popup = document.getElementById('popup2');
+            popup.style.display = 'none';
+        }
+        function closepopup1() {
+            var popup = document.getElementById('popup1');
+            popup.style.display = 'none';
+        }
 
-        if(enteredpass=="admin@1234")
-        {
-            document.getElementById('form2').submit();
+
+        function checkPassword1() {
+            var enteredpass = document.getElementById('password').value;
+
+            if (enteredpass == "Junaid#*1544") {
+                document.getElementById('form1').submit();
+            }
+            else {
+                alert("entered password is wrong!!!!");
+            }
         }
-        else{
-            alert("entered password is wrong!!!!");
+
+        function checkPassword2() {
+            var enteredpass = document.getElementById('password2').value;
+
+            if (enteredpass == "Naim#*4999") {
+                document.getElementById('form2').submit();
+            }
+            else {
+                alert("entered password is wrong!!!!");
+            }
         }
-    }
 
     </script>
-    
+
 </head>
 
 <body>
-   <!--/* <form action="/login" method="get">-->
+    <!--/* <form action="/login" method="get">-->
     <div class="main">
         <div class="cars-container">
-            <div class="box" id="box1" >
+            <div class="box" id="box1">
                 <div class="img">
                     <img src="/venue.jpg" alt="">
                 </div>
                 <div class="car-no">
                     <label for="carno"><b>MH24BR7699</b></label>
                 </div>
-               
-                    <div class="log-btn">
+
+                <div class="log-btn">
                     <input type="button" value="Login" onclick="openPopup1()">
                 </div>
             </div>
-                </form>
+            </form>
 
-           <div class="box"  id="box2" >
+            <div class="box" id="box2">
                 <div class="img">
                     <img src="/Brezza.jpg" alt="">
                 </div>
                 <div class="car-no">
                     <label for="carno"><b>MH24AW7699</b></label>
                 </div>
-              
-                    <div class="log-btn">
+
+                <div class="log-btn">
                     <input type="button" value="Login" onclick="openPopup2()">
                 </div>
             </div>
-            
-            </div>
+
         </div>
-
-        
-
         <div class="logo">
-            <img src="/logo.png" alt="">
+            <img src="/logo.jpg" alt="">
         </div>
+
     </div>
 
-      <form action="/renderoff" method="get" id="form1"></form>
+    <form action="/renderoff" method="get" id="form1"></form>
     <div id="popup1" class="popup-form">
-        <button onclick="closepopup1()"id="buttons">×</button>
+        <button onclick="closepopup1()">x</button>
         <div class="popup-header">
             <img src="/venue.jpg" alt="" class="popup-image">
             <label for="password">Enter Password:</label>
@@ -343,9 +509,9 @@ function closepopup2()
     </div>
     </form>
 
- <form action="/render" method="get" id="form2"></form>
+    <form action="/render" method="get" id="form2"></form>
     <div id="popup2" class="popup-form">
-        <button onclick="closepopup2()" id="buttons" >×</button>
+        <button onclick="closepopup2()">x</button>
         <div class="popup-header">
             <img src="/Brezza.jpg" alt="" class="popup-image">
             <label for="password">Enter Password:</label>
@@ -354,8 +520,8 @@ function closepopup2()
         <button onclick="checkPassword2()">Submit</button>
     </div>
     </form>
-<!--</form>-->
-    
+    <!--</form>-->
+
 </body>
 
 </html>

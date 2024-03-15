@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-   <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.png" type="image/x-icon">
+    <title>Registration Form</title>
 
     <!-- Font Icon -->
     <link rel="stylesheet"
@@ -227,12 +226,12 @@
     <section class="signup">
         <div class="container">
             <div class="signup-content">
-                <form method="post" action="/registernewdata" id="signup-form" class="signup-form"
+                <form method="post" action="/register" id="signup-form" class="signup-form"
                     onsubmit="submitForm(event)">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="ID">ID</label>
-                            <input type="text" class="form-input" name="ID" id="ID" value="{{ plus1 }}"readonly />
+                            <input type="text" class="form-input" name="ID" id="ID" value="{{plus1}}" readonly/>
                             <label for="Name">Full name</label>
                             <input type="text" class="form-input" name="Name" id="Name" required />
                         </div>

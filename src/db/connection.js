@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 
 
+/*
+mongoose.connect("mongodb+srv://AbrarShaikh:Andy%40998@cpp.csyvxe0.mongodb.net/GULSHAN_2024",
+//mongoose.connect("mongodb+srv://Junaid_Shaikh:Gulshan%40Junaid@cluster0.dgrgpxv.mongodb.net/GMDS", 
+{
+    
+}).then(() => {
+    console.log('Connection successful');
+}).catch((error) => {
+    console.error('Connection failed:', error);
+});
+*/
 
 let connectionString;
 
@@ -11,9 +22,8 @@ module.exports = {
             await mongoose.connection.close();
         }
 
-        console.log('inside the Connection.js file');
         connectionString = newConnectionString;
-        
+
         return mongoose.connect(connectionString, {
           
         });

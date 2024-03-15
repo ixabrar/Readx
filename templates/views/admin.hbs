@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.png" type="image/x-icon">
+    <link rel="icon"  href="./favicon.jpg" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
@@ -17,6 +17,7 @@
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #e8e8e8;
+            zoom: 90%;
         }
 
         * {
@@ -25,9 +26,8 @@
         }
 
         .header {
-            height: 55px;
+            height: 60px;
             background-color: #2F1847;
-            ;
         }
 
         #log-out button {
@@ -193,14 +193,122 @@
             height: 850px;
             width: 100%;
         }
-        #logo {
-            height: 113%;
-            width: 11%;
-            margin-left: 20px;
-            margin-top: -4px;
+
+        #username {
+            color: white;
+            text-align: center;
+            float: right;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            margin: 15px 15px;
+            letter-spacing: 1.2px;
+            font-size: 20px;
+        }
+
+        #Project-Name {
+            color: white;
+            font-family: 'Times New Roman', Times, serif;
+            size: 20px;
+        }
+
+        footer {
+            background-color: #171618;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        footer .copyright {
+            /* margin-bottom: 10px;*/
+        }
+
+        .mobhead {
+            display: none;
+        }
+
+        .mobhead img {
+            height: 50px;
+            width: 50px;
+            border-radius: 50px;
+            display: none;
+        }
+
+        /*       @media only screen and (max-width: 768px) {
+    .header {
+        height: auto;
+    }
+    #log-out button {
+        margin: 10px auto;
+        float: none;
+    }
+    #username {
+        text-align: center;
+        float: none;
+        margin: 10px auto;
+    }
+    .logininfo {
+        height: auto;
+    }
+    .logininfo img {
+        height: 120px;
+    }
+    #accordian {
+        width: 100%;
+        float: none;
+    }
+    #accordian ul.show-dropdown {
+        position: static;
+    }
+    #accordian ul.show-dropdown li {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+    #accordian ul.show-dropdown li a {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+    }
+    #frame {
+        height: auto;
+    }
+    footer {
+        padding: 10px 0;
+    }
+}*/
+
+        @media only screen and (max-width: 768px) {
+            #accordian {
+                display: none;
+            }
+
+            #header {
+                display: none;
+            }
+
+            .mobhead {
+                display: flex;
+                align-items: center;
+            }
+
+            .mobhead img {
+                display: inline-flex;
+                margin: 5px 15px;
+            }
+
+            .mobhead p {
+                color: white;
+                font-size: 25px;
+                font-family: 'Times New Roman', Times, serif;
+            }
+
+            .logout button {
+                float: right;
+            }
         }
     </style>
     <script>
+
         $(document).ready(function () {
             // Handle click events on menu items
             $("#accordian").on("click", "li", function (e) {
@@ -261,15 +369,14 @@
         function update(name) {
             var i = name;
             switch (name) {
-                case "Dashboard":
+                case "dashboard":
                     console.log("Setting src to DASHBOARD.hbs");
-                    document.getElementById('frame').src = './Dashboard'; // Use a relative path with the correct file extension
+                    document.getElementById('frame').src = './dashboard'; // Use a relative path with the correct file extension
                     break;
 
                 case "register":
                     console.log("Setting src to registration.hbs");
-                    document.getElementById('frame').src = './register'; 
-                    // Use a relative path
+                    document.getElementById('frame').src = './register'; // Use a relative path
                     break;
 
                 case "update":
@@ -296,17 +403,26 @@
 
 <body>
     <div class="header">
-        <img id="logo" src="./CPP.png">
-        <a href="/logout" id="log-out"><button>LOGOUT</button></a>
+        <div class="mobhead">
+            <img src="{{Image}}" alt="">
+            <p id="vihical-no">{{No}}</p>
+            <div class="logout">
+                <a href="/logout" id="log-out"><button>LOGOUT</button></a>
+            </div>
+        </div>
+        <div id="header">
+            <a href="/logout" id="log-out"><button>LOGOUT</button></a>
+            <h2 id="username"><b>{{Name}}</b></2>
+        </div>
 
     </div>
     <div class="main">
         <div id="accordian">
             <div class="logininfo">
-                <center><img src="{{ Image }}" alt="image here"></center>
+                <center><img src="{{Image}}" alt="image here"></center>
 
                 <center>
-                    <p id="vihical-no">{{ No }}</p>
+                    <p id="vihical-no">{{No}}</p>
                 </center>
             </div>
             <ul class="show-dropdown main-navbar">
@@ -315,7 +431,7 @@
                     <div class="bottom"></div>
                 </div>
                 <li class="active">
-                    <a onclick="change('Dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+                    <a onclick="change('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
                 </li>
                 <li>
                     <a onclick="change('register')"><i class="far fa-address-book"></i>New Admission</a>
@@ -333,10 +449,15 @@
             </ul>
         </div>
         <div class="mainbody">
-            <iframe src="./Dashboard" id="frame" frameborder="0"></iframe>
+            <iframe src="./dashboard" id="frame" frameborder="0"></iframe>
 
         </div>
     </div>
+    <footer>
+        <div class="copyright">
+            &copy; 2024 GCREATIX. All rights reserved.
+        </div>
+    </footer>
 </body>
 
 </html>

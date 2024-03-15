@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.png" type="image/x-icon">
+    <title>Admin Dashboard</title>
     <style>
         /* Your existing styles here */
 
         body {
-            font-family: 'Merriweather', serif; /* Set the desired font family */
-    }
-
+            font-family: 'Merriweather', serif;
+            /* Set the desired font family */
+        }
 
         .edit-form {
             max-width: 800px;
@@ -43,6 +42,12 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .edit-form input:hover,
+        .edit-form select:hover {
+            border-color: #3498db;
         }
 
         .edit-form button {
@@ -54,30 +59,14 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 18px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-top: 20px; /* Adjusted margin-top */
         }
 
-        .edit-form input,
-    .edit-form select {
-        /* ... (unchanged) */
-        transition: border-color 0.3s ease; /* Add transition for a smooth effect */
-    }
-
-    .edit-form input:hover,
-    .edit-form select:hover {
-        border-color: #3498db; /* Change border color on hover */
-    }
-
-    .edit-form button {
-        /* ... (unchanged) */
-        transition: background-color 0.3s ease, color 0.3s ease; /* Add transition for a smooth effect */
-    }
-
-    .edit-form button:hover {
-        background-color: #2886c5; /* Change background color on hover */
-        color: #fff; /* Change text color on hover */
-    }
-
-
+        .edit-form button:hover {
+            background-color: #2886c5;
+            color: #fff;
+        }
 
         .FEES {
             display: flex;
@@ -92,104 +81,99 @@
             margin-bottom: 0;
             /* Remove the bottom margin to align them in a row */
         }
-
-        #Save{
-            margin: 30px 0px 0px 0px;
-        }
     </style>
 
 </head>
 
 <body>
 
-   <form action="/submitform" method="post">
-    <div class="dashboard-container">
+    <form action="/submitform" method="post">
+        <div class="dashboard-container">
 
-        <!-- Your existing dashboard content -->
+            <!-- Your existing dashboard content -->
 
-        <div class="edit-form">
-            <div>
-                <h2>Edit Personal Information</h2>
-                <form id="studentForm">
-                    <label for="studentName">Student Name:</label>
-                    <input type="text" id="Name" name="Name" value="{{ data.Name }}" required>
+            <div class="edit-form">
+                <div>
+                    <h2>Edit Personal Information</h2>
+                    <form id="studentForm">
+                        <label for="studentName">Student Name:</label>
+                        <input type="text" id="Name" name="Name" value="{{ data.Name }}" required tabindex="1">
 
-                    <label for="studentID">Student ID:</label>
-                   <input type="number" id="ID" name="ID" value="{{ data.ID }}" readonly>
+                        <label for="studentID">Student ID:</label>
+                        <input type="number" id="ID" name="ID" value="{{ data.ID }}" readonly tabindex="2">
 
-                    <label for="licenceNumber">Licence Number:</label>
-                    <input type="text" id="LicenceNo" name="LicenceNo" value="{{ data.LicenceNo }}"
-                        required>
+                        <label for="licenceNumber">Licence Number:</label>
+                        <input type="text" id="LicenceNo" name="LicenceNo" value="{{ data.LicenceNo }}"
+                            required tabindex="3">
 
-                    <label for="mobNumber">Mobile Number:</label>
-                    <input type="text" id="MobNo" name="MobNo" value="{{ data.MobNo }}" required>
+                        <label for="mobNumber">Mobile Number:</label>
+                        <input type="text" id="MobNo" name="MobNo" value="{{ data.MobNo }}" required tabindex="4">
 
-                    <label for="fees">total Fees: </label>
-                    <input type="text" id="Total" name="Total" value="{{ data.Total }}" required>
+                        <label for="fees">total Fees: </label>
+                        <input type="text" id="Total" name="Total" value="{{ data.Total }}" required tabindex="5">
 
-                </form>
-            </div>
-            <div>
-                <h2>Edit Admission Information</h2>
-                
+                    </form>
+                </div>
+                <div>
+                    <h2>Edit Admission Information</h2>
+
                     <label for="admissionDate">Admission Date:</label>
-                   <input type="text" class="form-input" name="AddmissionDate" id="add_date"
-                                value="{{data.AddmissionDate}}"  />
+                    <input type="text" class="form-input" name="AddmissionDate" id="add_date"
+                        value="{{data.AddmissionDate}}" tabindex="6">
 
-                   <label for="type">Admission Type:</label>
-                   <input type="text" name="Type" value="{{data.Type}}"readonly >
+                    <label for="type">Admission Type:</label>
+                    <input type="text" name="Type" value="{{data.Type}}" readonly tabindex="7">
 
-                                <label for="llrType">LLR Type:</label>
-                                  <input type="text" name="LLRType" value="{{ data.LLRType }}"readonly >
+                    <label for="llrType">LLR Type:</label>
+                    <input type="text" name="LLRType" value="{{ data.LLRType }}" readonly tabindex="8">
 
-                                <label for="status">MDL STAUTS:</label>
-                                  <input type="text" name="MDLStatus" value="{{data.MDLStatus}}">
+                    <label for="status">MDL STAUTS:</label>
+                    <input type="text" name="MDLStatus" value="{{data.MDLStatus}}" tabindex="9">
 
 
                     <div class="FEES">
                         <label for="fees">Deposite </label>
-                        <input type="text" id="Deposite" name="Deposite" value="{{ data.Deposite }}" onblur="Pendingfee()" required>
+                        <input type="text" id="Deposite" name="Deposite" value="{{ data.Deposite }}"
+                            onblur="Pendingfee()" required tabindex="10">
 
                         <label for="fees">Pending </label>
-                        <input type="text" id="Pending" name="Pending" value="{{ data.Pending }}" required>
+                        <input type="text" id="Pending" name="Pending" value="{{ data.Pending }}" required tabindex="11">
                     </div>
-                    <button type="submit" >Save Information</button>
-                
+                    <button type="submit" tabindex="12">Save Information</button>
+
+                </div>
             </div>
+
         </div>
+    </form>
 
-    </div>
-   </form>
-
-   
 </body>
 <script>
     function Pendingfee() {
-            var Totalfee = document.getElementById('Total').value;
-            var Deposite = document.getElementById('Deposite').value;
+        var Totalfee = document.getElementById('Total').value;
+        var Deposite = document.getElementById('Deposite').value;
 
-            // Parse input values to integers
-            var totalfeeValue = parseInt(Totalfee, 10);
-            var depositeValue = parseInt(Deposite, 10);
+        // Parse input values to integers
+        var totalfeeValue = parseInt(Totalfee, 10);
+        var depositeValue = parseInt(Deposite, 10);
 
-            // Check if the parsed values are valid numbers
-            if (!isNaN(totalfeeValue) && !isNaN(depositeValue)) {
-                var pending = totalfeeValue - depositeValue;
+        // Check if the parsed values are valid numbers
+        if (!isNaN(totalfeeValue) && !isNaN(depositeValue)) {
+            var pending = totalfeeValue - depositeValue;
 
-                // Update Pending based on the calculated value
-                if (pending > 0) {
-                    document.getElementById('Pending').value = pending;
-                } else if (pending < 0) {
-                    document.getElementById('Pending').value = "ENTER A PROPER VALUE";
-                } else {
-                    document.getElementById('Pending').value = "0000";
-                }
+            // Update Pending based on the calculated value
+            if (pending > 0) {
+                document.getElementById('Pending').value = pending;
+            } else if (pending < 0) {
+                document.getElementById('Pending').value = "ENTER A PROPER VALUE";
             } else {
-                // Handle the case where input values are not valid numbers
-                document.getElementById('Pending').value = "Invalid input";
+                document.getElementById('Pending').value = "0000";
             }
+        } else {
+            // Handle the case where input values are not valid numbers
+            document.getElementById('Pending').value = "Invalid input";
         }
+    }
 </script>
-
 
 </html>

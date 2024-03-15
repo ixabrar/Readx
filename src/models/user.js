@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const moment = require('moment');
 
 
-
+/*
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-
+*/
 const studentSchema = new mongoose.Schema({
     ID: {
         type: Number,
@@ -186,6 +186,6 @@ userSchema.methods.comparePassword = function(candidatePassword) {
 
 const Student = mongoose.model("Student", studentSchema);
 const FeeStructure = mongoose.model("FeeStructure", feeStructureSchema);
-const userModel = mongoose.model("user", userSchema);
+//const userModel = mongoose.model("user", userSchema);
 
-module.exports = {Student,FeeStructure,userModel};
+module.exports = {Student,FeeStructure};

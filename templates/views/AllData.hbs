@@ -1,14 +1,14 @@
+<!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.png" type="image/x-icon">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Table</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <style>
+    <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
@@ -16,11 +16,11 @@
             padding: 0;
             display: flex;
             flex-direction: column;
-            align-items:
-                center;
+            align-items: center;
             justify-content: center;
             height: 100vh;
             overflow: hidden;
+            zoom: 90%;
         }
 
         .table-container {
@@ -48,7 +48,6 @@
             color: #ffffff;
             position: sticky;
             top: 0;
-            /* Stick to the top */
         }
 
         tr:hover {
@@ -60,13 +59,11 @@
             padding: 10px;
             background-color: #3a9ada;
             color: #ff0000;
-            text-decoration:
-                none;
+            text-decoration: none;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            position:
-                relative;
+            position: relative;
             left: 47%;
             top: -113px;
         }
@@ -74,89 +71,78 @@
         .close-button:hover {
             background-color: #2980b9;
         }
+
         .buttons-container {
-    display: flex;
-    justify-content: space-between; /* Adjust this property as needed */
-    align-items: center; /* Align buttons vertically in the center */
-}
-
-.buttons-container button {
-    /* Add any additional styling for the buttons */
-    padding: 10px;
-    margin-right: 10px; 
-    border-radius: 10px ;
-    background-color:#3498db ;
-    color: #fff;
-    /* Adjust the spacing between buttons */
-}
-
-#label {
-    /* Add styling for the label */
-    font-size: 16px;
-    /* Add any other styling properties you need */
-}
-
-    </style>
-    </head>
-
-    <body>
-
-        <div class="table-container">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>MobNo</th>
-                        <th>LicenceNo</th>
-                        <th>LLRType</th>
-                        <th>Type</th>
-                        <th>AddmissionDate</th>
-                        <th>Total</th>
-                        <th>Deposite</th>
-                        <th>Pending</th>
-                        <th>MDLStatus</th>
-                        
-                    </tr>
-                    
-                </thead>
-                
-                <tbody>
-                    <!-- Sample Data with 20 rows -->
-                    {{#each data}}
-                    <tr>
-                        <td>{{ID}}</td>
-                        <td>{{Name}}</td>
-                        <td>{{MobNo}}</td>
-                        <td>{{LicenceNo}}</td>
-                        <td>{{LLRType}}</td>
-                        <td>{{Type}}</td>
-                        <td>{{formatDate AddmissionDate}}</td>
-                        <td>{{Total}}</td>
-                        <td>{{Deposite}}</td>
-                        <td>{{Pending}}</td>
-                        <td>{{MDLStatus}}</td>
-                        
-                    </tr>
-                   
-                   
-                    {{/each}}
-                </tbody>
-            </table>
-        </div><br>
-       
-      <div class="buttons-container">
-    <button onclick="downloadPdf()">Download</button>
-    <button onclick="downloadCSV()">Download CSV</button>
-</div>
-
-       
-
-        <script>
-       
-        function goBack() {
-            window.history.back();
+            display: flex;
+            justify-content: space-between;
+            /* Adjust this property as needed */
+            align-items: center;
+            /* Align buttons vertically in the center */
         }
+
+        .buttons-container button {
+            /* Add any additional styling for the buttons */
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 10px;
+            background-color: #3498db;
+            color: #fff;
+            /* Adjust the spacing between buttons */
+        }
+        .buttons-container button:hover{
+            background-color: white;
+            color: black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="table-container">
+        <table id="dataTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>MobNo</th>
+                    <th>LicenceNo</th>
+                    <th>LLRType</th>
+                    <th>Type</th>
+                    <th>AddmissionDate</th>
+                    <th>Total</th>
+                    <th>Deposite</th>
+                    <th>Pending</th>
+                    <th>MDLStatus</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Sample Data with 20 rows -->
+                {{#each data}}
+                <tr>
+                    <td>{{ID}}</td>
+                    <td>{{Name}}</td>
+                    <td>{{MobNo}}</td>
+                    <td>{{LicenceNo}}</td>
+                    <td>{{LLRType}}</td>
+                    <td>{{Type}}</td>
+                    <td>{{formatDate this.AddmissionDate}}</td>
+                    <td>{{Total}}</td>
+                    <td>{{Deposite}}</td>
+                    <td>{{Pending}}</td>
+                    <td>{{MDLStatus}}</td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div><br>
+    <div class="buttons-container">
+        <button onclick="downloadPdf()">Download</button>
+        <button onclick="downloadCSV()">Download CSV</button>
+    </div>
+</body>
+
+    <script>
+
 
         function formatDate(isoDate) {
             const date = new Date(isoDate);
@@ -167,17 +153,16 @@
             return formattedDate;
         }
 
- function downloadCSV() {
+
+        function downloadCSV() {
             const table = document.getElementById('dataTable');
             const rows = table.querySelectorAll('tr');
 
-            // Create a CSV file content
             const csvContent = Array.from(rows, row => {
                 const cols = row.querySelectorAll('td,th');
                 return Array.from(cols, col => col.innerText).join(',');
             }).join('\n');
 
-            // Create a Blob and create a download link
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = window.URL.createObjectURL(blob);
@@ -185,70 +170,54 @@
             link.click();
         }
 
+        function downloadPdf() {
+            if (typeof pdfMake !== 'undefined') {
+                const data = [];
+                const table = document.getElementById('dataTable');
 
-function downloadPdf() 
-{
-        if (typeof pdfMake !== 'undefined') {
-    const data = [];
-    const table = document.getElementById('dataTable');
+                const numRows = table.rows.length;
+                const cellFontSize = 7;
 
-    // Limit the number of rows to 10
-    const numRows = table.rows.length;
+                for (let i = 0; i < numRows; i++) {
+                    const row = table.rows[i];
+                    const rowData = [];
 
+                    for (let j = 0; j < row.cells.length; j++) {
+                        const cellText = row.cells[j].innerText;
+                        const fontWeight = i == 0 ? 'bold' : 'normal';
 
-    // Define the font size for the table cells (e.g., 8)
-    const cellFontSize = 7;
+                        if (typeof cellText !== 'undefined') {
+                            rowData.push({ text: cellText, fontSize: cellFontSize, bold: fontWeight });
+                        } else {
+                            rowData.push({ text: '', fontSize: cellFontSize, bold: fontWeight });
+                        }
+                    }
 
-    // Iterate over rows
-    for (let i = 0; i < numRows; i++) {
-        const row = table.rows[i];
-        const rowData = [];
+                    data.push(rowData);
+                }
 
-        // Iterate over cells
-        for (let j = 0; j < row.cells.length; j++) {
-            const cellText = row.cells[j].innerText;
+                if (data.length > 0) {
+                    const docDefinition = {
+                        content: [
+                            {
+                                table: {
+                                    headerRows: 1,
+                                    body: data,
+                                    fontSize: cellFontSize,
+                                },
+                            },
+                        ],
+                    };
 
-            // Check if it's the first row to make it bold
-            const fontWeight = i == 0 ? 'bold' : 'normal';
-
-            // Check if the cell text is defined
-            if (typeof cellText !== 'undefined') {
-                rowData.push({ text: cellText, fontSize: cellFontSize, bold: fontWeight });
+                    pdfMake.createPdf(docDefinition).download('table_data.pdf');
+                } else {
+                    console.error('No data found in the table.');
+                }
             } else {
-                // If the cell text is undefined, push an empty string
-                rowData.push({ text: '', fontSize: cellFontSize, bold: fontWeight });
+                console.error('pdfMake library is not loaded.');
             }
         }
-
-        data.push(rowData);
-    }
-
-    // Ensure that there is data
-    if (data.length > 0) {
-        const docDefinition = {
-            content: [
-                {
-                    table: {
-                        headerRows: 1,
-                        body: data,
-                        fontSize: cellFontSize, // Set the font size for the entire table
-                    },
-                },
-            ],
-        };
-
-        pdfMake.createPdf(docDefinition).download('table_data.pdf');
-    } else {
-        console.error('No data found in the table.');
-    }
-} else {
-    console.error('pdfMake library is not loaded.');
-}
-
-
-        }
-
     </script>
-    </body>
+</body>
 
 </html>
