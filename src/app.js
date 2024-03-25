@@ -2,18 +2,16 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const hbs = require("hbs");
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const moment = require('moment');
-const twilio =require('twilio');
-const cookieParser = require('cookie-parser');
-const session = require('express-session');
-app.use(express.static('public'));
-
-
+const moment = require("moment");
+const twilio = require("twilio");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+app.use(express.static("public"));
 
 /////////////////////////////////////
-const connection = require('./db/connection');
+const connection = require("./db/connection");
 /////////////////////////////////////
 
 require("./db/connection");
@@ -31,25 +29,26 @@ app.use(express.static(static_path));
 app.set("view engine", "hbs");
 app.set("views", templates_path);
 
-
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({
-    secret: 'thisisrandomstuff',
+app.use(
+  session({
+    secret: "thisisrandomstuff",
     resave: false,
     saveUninitialized: true,
     cookie: {
-        maxAge: 100 * 60 * 1000 // 100 minutes
-    }
-}));
+      maxAge: 100 * 60 * 1000, // 100 minutes
+    },
+  })
+);
 
 //middleware
 var sessionChecker = (req, res, next) => {
   console.log("inside the middleware1");
   if (req.session.user || req.cookies.user_sid) {
     // User is authenticated, proceed to the next middleware
-    res.redirect('/login');
+    res.redirect("/index");
   } else {
     next();
   }
@@ -60,130 +59,127 @@ var sessionChecker2 = (req, res, next) => {
   if (req.session.user || req.cookies.user_sid) {
     next();
   } else {
-    res.redirect('/login');
-    
+    res.redirect("/login");
   }
 };
 app.get("/", (req, res) => {
   res.redirect("/login");
- 
 });
-app.get('/index',  (req, res) => {
-  console.log('inside the index get request');
+app.get("/index", (req, res) => {
+  console.log("inside the index get request");
   if (req.session.user || req.cookies.user_sid) {
-      res.render('index', { user: req.session.user });
-      console.log('index page rendered');
+    res.render("index", { user: req.session.user });
+    console.log("index page rendered");
   } else {
-      res.redirect('/login');
+    res.redirect("/login");
   }
 });
-app.route('/login')
+app
+  .route("/login")
   .get(sessionChecker, (req, res) => {
-    res.render('login.hbs');
+    res.render("login.hbs");
   })
   .post(async (req, res) => {
-    const USER = 'GMDS'; // Set your actual username
-    const PASS = 'Naim@11223'; // Set your actual password
+    const USER = "GMDS"; // Set your actual username
+    const PASS = "Naim@11223"; // Set your actual password
 
     const username = req.body.username;
     const password = req.body.password;
 
     try {
       if (username !== USER || password !== PASS) {
-        return res.redirect('/login');
+        return res.redirect("/login");
       }
 
       // Set user information in the session
-      req.session.user = { username: USER, }; // Adjust as needed
+      req.session.user = { username: USER }; // Adjust as needed
 
-      console.log('User Session:', req.session.user);
-      console.log('Redirecting to the index');
-      res.redirect('/index');
+      console.log("User Session:", req.session.user);
+      console.log("Redirecting to the index");
+      res.redirect("/index");
     } catch (err) {
       console.error(err);
-      res.redirect('/login');
+      res.redirect("/login");
     }
   });
-app.get("/render",sessionChecker2, async (req, res) => {
-  console.log('Accessed /render route');
-  const Image = '/Brezza.jpg';
-  const No='MH24AW7699';
-  const Name="Naim Shabarfiwale"
+app.get("/render", sessionChecker2, async (req, res) => {
+  console.log("Accessed /render route");
+  const Image = "/Brezza.jpg";
+  const No = "MH24AW7699";
+  const Name = "Naim Shabarfiwale";
   try {
-      // Specify the new connection string dynamically
-      await connection.connectToDatabase("mongodb+srv://Gulshan_Naim:Naim%40499@gulshan-naim.9oiq5ea.mongodb.net/j");
+    // Specify the new connection string dynamically
+    await connection.connectToDatabase(
+      "mongodb+srv://Gulshan_Naim:Naim%40499@gulshan-naim.9oiq5ea.mongodb.net/j"
+    );
 
-      // Access the current connection string
-      console.log('Current connection string:', connection.getConnectionString());
+    // Access the current connection string
+    console.log("Current connection string:", connection.getConnectionString());
 
-      // Render your view or perform other actions
-      res.render("admin",{Image,No,Name});
+    // Render your view or perform other actions
+    res.render("admin", { Image, No, Name });
   } catch (error) {
-      console.error('Connection failed:', error);
-      // Handle the error or render an error page
-      res.status(500).send('Internal Server Error');
+    console.error("Connection failed:", error);
+    // Handle the error or render an error page
+    res.status(500).send("Internal Server Error");
   }
 });
 
-app.get("/renderoff",sessionChecker2, async (req, res) => {
-  console.log('Accessed /render route');
-  const Image = '/venue.jpg';
-  const No='MH24BR7699';
-  const Name="Junaid Shaikh"
+app.get("/renderoff", sessionChecker2, async (req, res) => {
+  console.log("Accessed /render route");
+  const Image = "/venue.jpg";
+  const No = "MH24BR7699";
+  const Name = "Junaid Shaikh";
   try {
-      // Specify the new connection string dynamically
-      await connection.connectToDatabase("mongodb+srv://Junaid_Shaikh:Gulshan%40Junaid@cluster0.dgrgpxv.mongodb.net/GMDS");
+    // Specify the new connection string dynamically
+    await connection.connectToDatabase(
+      "mongodb+srv://Junaid_Shaikh:Gulshan%40Junaid@cluster0.dgrgpxv.mongodb.net/GMDS"
+    );
 
-      // Access the current connection string
-      console.log('Current connection string:', connection.getConnectionString());
+    // Access the current connection string
+    console.log("Current connection string:", connection.getConnectionString());
 
-      // Render your view or perform other actions
-      res.render("admin",{Image,No,Name});
+    // Render your view or perform other actions
+    res.render("admin", { Image, No, Name });
   } catch (error) {
-      console.error('Connection failed:', error);
-      // Handle the error or render an error page
-      res.status(500).send('Internal Server Error');
+    console.error("Connection failed:", error);
+    // Handle the error or render an error page
+    res.status(500).send("Internal Server Error");
   }
 });
 ////////////////////////////////////////////
-app.get("/admin",(req,res)=>{
+app.get("/admin", (req, res) => {
   res.render("admin");
 });
 
-
-
-hbs.registerHelper('formatDate', function (date) {
-  return moment(date).format('DD-MM-YYYY');
+hbs.registerHelper("formatDate", function (date) {
+  return moment(date).format("DD-MM-YYYY");
 });
 
 app.get("/register", async (req, res) => {
-  try{
-
-    const totalno =await Student.aggregate([
+  try {
+    const totalno = await Student.aggregate([
       {
         $group: {
-          _id: null,       
-          totalCount: { $sum: 1 }  
-        }
-      }
+          _id: null,
+          totalCount: { $sum: 1 },
+        },
+      },
     ]);
 
-    const totalStudentCount = totalno[0].totalCount;
-    const plus1=totalStudentCount+1;
+    const totalStudentCount = totalno.length > 0 ? totalno[0].totalCount : 0;
+    const plus1 = totalStudentCount + 1;
 
-
-    res.render("register",{plus1});
+    res.render("register", { plus1 });
   } catch (error) {
-    console.error('Error retrieving data:', error);
-    res.status(500).send('Server Error');
+    console.error("Error retrieving data:", error);
+    res.status(500).send("Server Error");
   }
-  
 });
 
 app.get("/login", (req, res) => {
   res.render("login");
 });
-
 app.get("/filter/askMonth", (req, res) => {
   res.render("askMonth");
 });
@@ -194,99 +190,96 @@ app.get("/view", (req, res) => {
 app.get("/update", (req, res) => {
   res.render("update");
 });
-app.get("/More",(req,res)=>{
-  res.render("More")
+app.get("/More", (req, res) => {
+  res.render("More");
 });
 app.get("/AllData", (req, res) => {
   res.render("AllData");
 });
-app.get('/searchData', (req, res) => {
-  res.render('searchData');
+app.get("/searchData", (req, res) => {
+  res.render("searchData");
 });
-app.get("/delete",(rqs , res )=> {
-  res.render('delete');
+app.get("/delete", (rqs, res) => {
+  res.render("delete");
 });
-app.get("/test",(rqs , res )=> {
-  res.render('test');
+app.get("/test", (rqs, res) => {
+  res.render("test");
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/logout',(req,res)=>{
+app.get("/logout", (req, res) => {
   res.redirect("/index");
 });
 //////////////////////////////////////////
-hbs.registerHelper('json', function(context) {
+hbs.registerHelper("json", function (context) {
   return new hbs.SafeString(JSON.stringify(context));
 });
 
-app.get('/dashboard', async (req, res) => {
+app.get("/dashboard", async (req, res) => {
   try {
-
-    const totalno =await Student.aggregate([
+    const totalno = await Student.aggregate([
       {
         $group: {
-          _id: null,       
-          totalCount: { $sum: 1 }  
-        }
-      }
+          _id: null,
+          totalCount: { $sum: 1 },
+        },
+      },
     ]);
 
     const today = new Date();
-const currentMonth = today.getMonth() + 1; // Months are zero-based in JavaScript
-const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth() + 1; // Months are zero-based in JavaScript
+    const currentYear = today.getFullYear();
 
-const monthlyStudentCount = await Student.aggregate([
-  {
-    $match: {
-      $expr: {
-        $and: [
-          { $eq: [{ $month: "$AddmissionDate" }, currentMonth] },
-          { $eq: [{ $year: "$AddmissionDate" }, currentYear] },
-        ],
+    const monthlyStudentCount = await Student.aggregate([
+      {
+        $match: {
+          $expr: {
+            $and: [
+              { $eq: [{ $month: "$AddmissionDate" }, currentMonth] },
+              { $eq: [{ $year: "$AddmissionDate" }, currentYear] },
+            ],
+          },
+        },
       },
-    },
-  },
-  {
-    $group: {
-      _id: null,
-      totalCount: { $sum: 1 },
-    },
-  },
-]);
-const totalPending = await FeeStructure.aggregate([
-  {
-    $group: {
-      _id: null,
-      totalPending: { $sum: "$Pending" }
-    }
-  }
-]);
+      {
+        $group: {
+          _id: null,
+          totalCount: { $sum: 1 },
+        },
+      },
+    ]);
+    const totalPending = await FeeStructure.aggregate([
+      {
+        $group: {
+          _id: null,
+          totalPending: { $sum: "$Pending" },
+        },
+      },
+    ]);
 
-const result = await FeeStructure.aggregate([
-  
-  {
-    $group: {
-      _id: null, // Group all documents together
-      totalDLFee: { $sum: "$DLFee" },
-      totalLLFee: { $sum: "$LLFee" },
-      totalGForm: { $sum: "$GForm" }
-    }
-  },
-  {
-    $project: {
-      _id: 0,
-      grandTotal: { $add: ["$totalDLFee", "$totalLLFee", "$totalGForm"] }
-    }
-
-  }
-]);
+    const result = await FeeStructure.aggregate([
+      {
+        $group: {
+          _id: null, // Group all documents together
+          totalDLFee: { $sum: "$DLFee" },
+          totalLLFee: { $sum: "$LLFee" },
+          totalGForm: { $sum: "$GForm" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          grandTotal: { $add: ["$totalDLFee", "$totalLLFee", "$totalGForm"] },
+        },
+      },
+    ]);
     // Aggregation for doughnut chart based on LLRType
     const doughnutChartData = await Student.aggregate([
       {
         $group: {
-          _id: '$LLRType',
-          count: { $sum: 1 }
-        }
-      }
+          _id: "$LLRType",
+          count: { $sum: 1 },
+        },
+      },
     ]);
 
     // Aggregation for bar chart based on monthly registrations
@@ -294,88 +287,97 @@ const result = await FeeStructure.aggregate([
       {
         $project: {
           month: { $month: "$AddmissionDate" },
-          year: { $year: "$AddmissionDate" }
-        }
+          year: { $year: "$AddmissionDate" },
+        },
       },
       {
         $group: {
           _id: { month: "$month", year: "$year" },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
-      { $sort: { "_id.year": 1, "_id.month": 1 } } // Sorting by year and month
+      { $sort: { "_id.year": 1, "_id.month": 1 } }, // Sorting by year and month
     ]);
 
-    const totalStudentCount = totalno[0].totalCount;
+    const totalStudentCount = totalno.length > 0 ? totalno[0].totalCount : 0;
     const totalStudentsCurrentMonth = monthlyStudentCount.length > 0 ? monthlyStudentCount[0].totalCount : 0;
-    const TotalPendingFee = totalPending.length > 0 ? totalPending[0].totalPending : 0;
-    const doughnutLabels = doughnutChartData.map(entry => entry._id);
-    const doughnutValues = doughnutChartData.map(entry => entry.count);
+    const TotalPendingFee =  totalPending.length > 0 ? totalPending[0].totalPending : 0;
+    const doughnutLabels = doughnutChartData.map((entry) => entry._id);
+    const doughnutValues = doughnutChartData.map((entry) => entry.count);
 
     // Preparing data for bar chart
     const barLabels = barChartData
-  .filter(item => item._id.month !== null && item._id.year !== null)
-  .map(item => `${item._id.month}`-`${item._id.year}`);
-const barValues = barChartData
-  .filter(item => item._id.month !== null && item._id.year !== null)
-  .map(item => item.count);
+      .filter((item) => item._id.month !== null && item._id.year !== null)
+      .map((item) => `${item._id.month}` - `${item._id.year}`);
+    const barValues = barChartData
+      .filter((item) => item._id.month !== null && item._id.year !== null)
+      .map((item) => item.count);
 
-  console.log(`Total Number of Students: ${totalStudentCount}`);
- console.log("total pending fee:", TotalPendingFee);
-    console.log('doughnutlabels:',doughnutLabels );
+    console.log(`Total Number of Students: ${totalStudentCount}`);
+    console.log("total pending fee:", TotalPendingFee);
+    console.log("doughnutlabels:", doughnutLabels);
     console.log("doughnutValues: ", doughnutValues);
-    console.log('barLabels:', barLabels);
-console.log('barValues:', barValues);
+    console.log("barLabels:", barLabels);
+    console.log("barValues:", barValues);
 
-if (result.length > 0) {
-  const { grandTotal } = result[0];
-    // Passing both datasets to the template
-    res.render('dashboard',   {
-      totalStudentCount ,
-      totalStudentsCurrentMonth,
-      TotalPendingFee,
-      grandTotal,
-      doughnutLabels,
-      doughnutValues, // Data for doughnut chart
-      barLabels,
-      barValues // Data for bar chart
-    });
-  }
+    if (result.length > 0) {
+      const { grandTotal } = result[0];
+      // Passing both datasets to the template
+      res.render("dashboard", {
+        totalStudentCount,
+        totalStudentsCurrentMonth,
+        TotalPendingFee,
+        grandTotal,
+        doughnutLabels,
+        doughnutValues, // Data for doughnut chart
+        barLabels,
+        barValues, // Data for bar chart
+      });
+    }
   } catch (error) {
-    console.error('Error retrieving data:', error);
-    res.status(500).send('Server Error');
+    console.error("Error retrieving data:", error);
+    res.status(500).send("Server Error");
   }
 });
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.post("/register", async (req, res) => {
   try {
-
     console.log("Received POST request to /register");
     console.log("Request Body:", req.body);
 
     // Validate request body parameters
-    const { ID, Name, MobNo, LicenceNo, LLRType, Type, AddmissionDate, Total, Deposite, Pending, MDLStatus } = req.body;
+    const {
+      ID,
+      Name,
+      MobNo,
+      LicenceNo,
+      LLRType,
+      Type,
+      AddmissionDate,
+      Total,
+      Deposite,
+      Pending,
+      MDLStatus,
+    } = req.body;
 
     // Convert ID to integer
     const sid = parseInt(ID);
 
     // Create a new Student document
     const studentData = new Student({
-        ID: sid,
-        Name,
-        MobNo,
-        LicenceNo,
-        LLRType,
-        Type,
-        AddmissionDate,
-        Total,
-        Deposite,
-        Pending,
-        MDLStatus,
+      ID: sid,
+      Name,
+      MobNo,
+      LicenceNo,
+      LLRType,
+      Type,
+      AddmissionDate,
+      Total,
+      Deposite,
+      Pending,
+      MDLStatus,
     });
 
     // Save the student document to the database
@@ -383,27 +385,23 @@ app.post("/register", async (req, res) => {
 
     // Create a new FeeStructure document
     const feeStructureData = new FeeStructure({
-        ID: sid,
-        Name,
-        MobNo,
-        LLRType,
-        AddmissionDate,
-        Total,
-        Deposite,
-        Pending,
+      ID: sid,
+      Name,
+      MobNo,
+      LLRType,
+      AddmissionDate,
+      Total,
+      Deposite,
+      Pending,
     });
 
     calculateFees(LLRType, feeStructureData);
 
     // Save the feeStructure document to the database
     const feeRegistered = await feeStructureData.save();
-    
-    console.log('Fee structure data entered successfully:', feeRegistered);
-    console.log('Student registered successfully:', registeredStudent);
-    
-  
-   
-    
+
+    console.log("Fee structure data entered successfully:", feeRegistered);
+    console.log("Student registered successfully:", registeredStudent);
 
     /*
     // Send SMS to the registered user
@@ -432,62 +430,66 @@ app.post("/register", async (req, res) => {
       res.status(500).send('Error sending SMS');
     });*/
   } catch (error) {
-    console.error('Error during registration:', error.message);
+    console.error("Error during registration:", error.message);
     res.status(400).send(`Bad Request: ${error.message}`);
   }
 });
 
-
 function calculateFees(LLRType, feeStructureData) {
   switch (LLRType) {
-      case "MCWG / LMV":
-      case "MCWG / LMV-TR":
-          feeStructureData.LLFee = 350;
-          feeStructureData.DLFee = 1100;
-          feeStructureData.GForm = 500;
-          break;
-      case "LMV":
-          feeStructureData.LLFee = 150;
-          feeStructureData.DLFee = 1100;
-          feeStructureData.GForm = 350;
-          break;
-      case "LMV-TR":
-          feeStructureData.LLFee = 150;
-          feeStructureData.DLFee = 1100;
-          feeStructureData.GForm = 400;
-          break;
-       case "ONLY-TRAINING":
-            feeStructureData.LLFee = 0;
-            feeStructureData.DLFee = 0;
-            feeStructureData.GForm = 0;
-            break;
-      // Add more cases for other LLRTypes if needed
-      default:
-          break;
+    case "MCWG / LMV":
+    case "MCWG / LMV-TR":
+      feeStructureData.LLFee = 350;
+      feeStructureData.DLFee = 1100;
+      feeStructureData.GForm = 500;
+      break;
+    case "LMV":
+      feeStructureData.LLFee = 150;
+      feeStructureData.DLFee = 1100;
+      feeStructureData.GForm = 350;
+      break;
+    case "LMV-TR":
+      feeStructureData.LLFee = 150;
+      feeStructureData.DLFee = 1100;
+      feeStructureData.GForm = 400;
+      break;
+    case "ONLY-TRAINING":
+      feeStructureData.LLFee = 0;
+      feeStructureData.DLFee = 0;
+      feeStructureData.GForm = 0;
+      break;
+    // Add more cases for other LLRTypes if needed
+    default:
+      break;
   }
-  feeStructureData.Balance = feeStructureData.Total - feeStructureData.Pending - feeStructureData.DLFee - feeStructureData.LLFee - feeStructureData.GForm;
+  feeStructureData.Balance =
+    feeStructureData.Total -
+    feeStructureData.Pending -
+    feeStructureData.DLFee -
+    feeStructureData.LLFee -
+    feeStructureData.GForm;
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.get('/viewAll', async (req, res) => {
+app.get("/viewAll", async (req, res) => {
   try {
     const data = await Student.find(); // Fetch all data from MongoDB
 
     if (data.length > 0) {
       console.log(data); // Log the data retrieved from MongoDB
-      res.render('AllData', { data }); // Render the allData.hbs template with the retrieved data
+      res.render("AllData", { data }); // Render the allData.hbs template with the retrieved data
     } else {
-      console.log('No data found in the database');
-      res.status(404).send('No data found');
+      console.log("No data found in the database");
+      res.status(404).send("No data found");
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).send('Server Error');
+    console.error("Error fetching data:", error);
+    res.status(500).send("Server Error");
   }
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-app.post('/view', async (req, res) => {
+app.post("/view", async (req, res) => {
   const { ID, MobNo } = req.body;
 
   try {
@@ -500,18 +502,20 @@ app.post('/view', async (req, res) => {
 
     if (data) {
       console.log(data); // Log the data retrieved from MongoDB
-      res.render('data', { data }); // Render the data.hbs template with the retrieved data
+      res.render("data", { data }); // Render the data.hbs template with the retrieved data
     } else {
-      console.log(ID ? `No data found for ID: ${ID}` : `No data found for MobNo: ${MobNo}`);
-      res.status(404).send('Data not found');
+      console.log(
+        ID ? `No data found for ID: ${ID}` : `No data found for MobNo: ${MobNo}`
+      );
+      res.status(404).send("Data not found");
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).send('Server Error');
+    console.error("Error fetching data:", error);
+    res.status(500).send("Server Error");
   }
 });
 
-app.post('/update', async (req, res) => {
+app.post("/update", async (req, res) => {
   const { ID, MobNo } = req.body;
 
   try {
@@ -524,26 +528,39 @@ app.post('/update', async (req, res) => {
 
     if (data) {
       console.log(data); // Log the data retrieved from MongoDB
-      res.render('newD', { data }); // Render the data.hbs template with the retrieved data
+      res.render("newD", { data }); // Render the data.hbs template with the retrieved data
     } else {
-      console.log(ID ? `No data found for ID: ${ID}` : `No data found for MobNo: ${MobNo}`);
-      res.status(404).send('Data not found');
+      console.log(
+        ID ? `No data found for ID: ${ID}` : `No data found for MobNo: ${MobNo}`
+      );
+      res.status(404).send("Data not found");
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).send('Server Error');
+    console.error("Error fetching data:", error);
+    res.status(500).send("Server Error");
   }
 });
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // helpers/handlebars-helpers.js
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.post("/submitform", async (req, res) => {
   try {
-    const { ID, Name, MobNo, LicenceNo, LLRType, Type, AddmissionDate, Total, Deposite, Pending, MDLStatus } = req.body;
+    const {
+      ID,
+      Name,
+      MobNo,
+      LicenceNo,
+      LLRType,
+      Type,
+      AddmissionDate,
+      Total,
+      Deposite,
+      Pending,
+      MDLStatus,
+    } = req.body;
 
-    console.log('Requested Data:', req.body);
+    console.log("Requested Data:", req.body);
 
     const result1 = await Student.findOneAndUpdate(
       { ID },
@@ -570,10 +587,10 @@ app.post("/submitform", async (req, res) => {
         $set: {
           ID,
           Name,
-          MobNo,	
-          LLRType,	
-          AddmissionDate,	
-          Total,	
+          MobNo,
+          LLRType,
+          AddmissionDate,
+          Total,
           Deposite,
           Pending,
         },
@@ -592,29 +609,35 @@ app.post("/submitform", async (req, res) => {
         { new: true }
       );
 
-      console.log('Data in Student');
-      console.log('Student Deposite', result1.Deposite);
-      console.log('Student Pending', result1.Pending);
-      console.log('Data in FeeStructure');
-      console.log('FeeStructure Deposite', updatedResult2.Deposite);
-      console.log('FeeStructure Pending', updatedResult2.Pending);
-      console.log('FeeStructure DLFee', updatedResult2.DLFee);
-      console.log('FeeStructure LLFee', updatedResult2.LLFee);
-      console.log('FeeStructure GForm', updatedResult2.GForm);
-      console.log('FeeStructure Balance', updatedResult2.Balance);
+      console.log("Data in Student");
+      console.log("Student Deposite", result1.Deposite);
+      console.log("Student Pending", result1.Pending);
+      console.log("Data in FeeStructure");
+      console.log("FeeStructure Deposite", updatedResult2.Deposite);
+      console.log("FeeStructure Pending", updatedResult2.Pending);
+      console.log("FeeStructure DLFee", updatedResult2.DLFee);
+      console.log("FeeStructure LLFee", updatedResult2.LLFee);
+      console.log("FeeStructure GForm", updatedResult2.GForm);
+      console.log("FeeStructure Balance", updatedResult2.Balance);
 
       res.redirect("back");
     } else {
       res.status(404).send(`Student with ID ${ID} not found`);
     }
   } catch (error) {
-    console.error('Error handling form submission:', error);
-    res.status(500).send('Server Error');
+    console.error("Error handling form submission:", error);
+    res.status(500).send("Server Error");
   }
 });
 
 function calculatebalance(feeData) {
-  return feeData.Total - feeData.Pending - feeData.DLFee - feeData.LLFee - feeData.GForm;
+  return (
+    feeData.Total -
+    feeData.Pending -
+    feeData.DLFee -
+    feeData.LLFee -
+    feeData.GForm
+  );
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -638,10 +661,21 @@ app.get("/searchData", async (req, res) => {
 
 app.post("/deleteForm", async (req, res) => {
   try {
-    
-    const { ID, Name, MobNo, LicenceNo, LLRType, Type, AddmissionDate, Total, Deposite, Pending, MDLStatus } = req.body;
+    const {
+      ID,
+      Name,
+      MobNo,
+      LicenceNo,
+      LLRType,
+      Type,
+      AddmissionDate,
+      Total,
+      Deposite,
+      Pending,
+      MDLStatus,
+    } = req.body;
 
-    console.log('Requested Data:', req.body);
+    console.log("Requested Data:", req.body);
 
     const result = await Student.deleteOne(
       { ID },
@@ -660,42 +694,41 @@ app.post("/deleteForm", async (req, res) => {
         },
       },
       { new: true } // Return the modified document
-  );
-  const result2 = await FeeStructure.deleteOne(
-    { ID },
-    {
-      $set: {
-        ID,
-        Name,
-        MobNo,	
-        LLRType,	
-        AddmissionDate,	
-        Total,	
-        Deposite,
-        Pending,
+    );
+    const result2 = await FeeStructure.deleteOne(
+      { ID },
+      {
+        $set: {
+          ID,
+          Name,
+          MobNo,
+          LLRType,
+          AddmissionDate,
+          Total,
+          Deposite,
+          Pending,
+        },
       },
-    },
-    { new: true } // Return the modified document
-  );
+      { new: true } // Return the modified document
+    );
 
     if (result && result2) {
-       res.redirect("back");
+      res.redirect("back");
     } else {
       res.status(404).send(`Student with ID ${ID} not found`);
     }
   } catch (error) {
-    console.error('Error handling form submission:', error);
-    res.status(500).send('Server Error');
+    console.error("Error handling form submission:", error);
+    res.status(500).send("Server Error");
   }
 });
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////
-app.get('/askMonth', (req, res) => {
-  res.render('askMonth');
+app.get("/askMonth", (req, res) => {
+  res.render("askMonth");
 });
 
-app.get('/displayData', async (req, res) => {
+app.get("/displayData", async (req, res) => {
   try {
     const { month } = req.query;
 
@@ -703,35 +736,35 @@ app.get('/displayData', async (req, res) => {
     let formattedMonth;
 
     if (month) {
-        // If a specific month is provided, filter students by that month
-        const startDate = moment(month, 'YYYY-MM').startOf('month').toDate();
-        const endDate = moment(month, 'YYYY-MM').endOf('month').toDate();
+      // If a specific month is provided, filter students by that month
+      const startDate = moment(month, "YYYY-MM").startOf("month").toDate();
+      const endDate = moment(month, "YYYY-MM").endOf("month").toDate();
 
-        console.log('Start Date:', startDate);
-        console.log('End Date:', endDate);
+      console.log("Start Date:", startDate);
+      console.log("End Date:", endDate);
 
-        students = await Student.find({
-            AddmissionDate: { $gte: startDate, $lte: endDate }
-        });
+      students = await Student.find({
+        AddmissionDate: { $gte: startDate, $lte: endDate },
+      });
 
-        // Format the selectedMonth to display the month name
-        formattedMonth = moment(month, 'YYYY-MM').format('MMMM');
-        console.log('Filtered Students:', students);
+      // Format the selectedMonth to display the month name
+      formattedMonth = moment(month, "YYYY-MM").format("MMMM");
+      console.log("Filtered Students:", students);
     } else {
-        // If no specific month is provided, fetch all students
-        students = await Student.find({});
+      // If no specific month is provided, fetch all students
+      students = await Student.find({});
     }
 
-    console.log('Final Students Array:', students);
+    console.log("Final Students Array:", students);
 
-    res.render('displayData', { students, selectedMonth: formattedMonth }); // Pass formattedMonth to the template
+    res.render("displayData", { students, selectedMonth: formattedMonth }); // Pass formattedMonth to the template
   } catch (error) {
-    console.error('Error fetching students:', error);
-    res.status(500).send('Internal Server Error');
+    console.error("Error fetching students:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 
-app.get('/displayFeeData', async (req, res) => {
+app.get("/displayFeeData", async (req, res) => {
   try {
     const { month } = req.query;
 
@@ -739,31 +772,31 @@ app.get('/displayFeeData', async (req, res) => {
     let formattedMonth;
 
     if (month) {
-        // If a specific month is provided, filter FeeData by that month
-        const startDate = moment(month, 'YYYY-MM').startOf('month').toDate();
-        const endDate = moment(month, 'YYYY-MM').endOf('month').toDate();
+      // If a specific month is provided, filter FeeData by that month
+      const startDate = moment(month, "YYYY-MM").startOf("month").toDate();
+      const endDate = moment(month, "YYYY-MM").endOf("month").toDate();
 
-        console.log('Start Date:', startDate);
-        console.log('End Date:', endDate);
+      console.log("Start Date:", startDate);
+      console.log("End Date:", endDate);
 
-        FeeData = await FeeStructure.find({
-            AddmissionDate: { $gte: startDate, $lte: endDate }
-        });
+      FeeData = await FeeStructure.find({
+        AddmissionDate: { $gte: startDate, $lte: endDate },
+      });
 
-        // Format the selectedMonth to display the month name
-        formattedMonth = moment(month, 'YYYY-MM').format('MMMM');
-        console.log('Filtered FeeData:', FeeData);
+      // Format the selectedMonth to display the month name
+      formattedMonth = moment(month, "YYYY-MM").format("MMMM");
+      console.log("Filtered FeeData:", FeeData);
     } else {
-        // If no specific month is provided, fetch all FeeData
-        FeeData = await Student.find({});
+      // If no specific month is provided, fetch all FeeData
+      FeeData = await Student.find({});
     }
 
-    console.log('Final FeeData Array:', FeeData);
+    console.log("Final FeeData Array:", FeeData);
 
-    res.render('displayData', { FeeData, selectedMonth: formattedMonth }); // Pass formattedMonth to the template
+    res.render("displayData", { FeeData, selectedMonth: formattedMonth }); // Pass formattedMonth to the template
   } catch (error) {
-    console.error('Error fetching FeeData:', error);
-    res.status(500).send('Internal Server Error');
+    console.error("Error fetching FeeData:", error);
+    res.status(500).send("Internal Server Error");
   }
 });
 ///////////////////////////////////////////////////////////////////////////////////////////
