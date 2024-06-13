@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const moment = require('moment');
+const bcrypt = require('bcryptjs');
 
 const studentSchema = new mongoose.Schema({
     ID: {
@@ -15,28 +16,13 @@ const studentSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    LicenceNo: {
-        type: String,
-        required: true,
-    },
-    LLRType: {
-        type: [String],
-    },
-    Type: {
-        type: String,
-    },
-    AddmissionDate: {
+    SAddmissionDate: {
         type: Date,
         default: Date.now,
-        set: function(value) {
-            // If the value is a valid date string, parse it and return the Date object
-            if (typeof value === 'string') {
-              const parsedDate = moment(value, 'DD-MM-YYYY');
-              return parsedDate.isValid() ? parsedDate.toDate() : value;
-            }
-            return value;
-          },
     
+    },
+    EAddmissionDate: {
+        type: Date
     },
     Total: {
         type: Number,
@@ -49,67 +35,56 @@ const studentSchema = new mongoose.Schema({
     Pending: {
         type: Number,
     },
-    MDLStatus: {
+    Photo: {
+        type: Buffer,
+    },
+    gender: {
         type: String,
+        enum: ['Male', 'Female']
+    },
+    Type : {
+        type : String,
     }
 });
 
-const feeStructureSchema = new mongoose.Schema({
-    ID: {
-        type: Number,
-        required: true,
-        unique: true
+
+
+const userSchema = new mongoose.Schema({
+   
+    name: {
+        type:String
     },
-    Name: {
-        type: String,
-        required: true,
+
+    username: { type: String,
+                required: true,
+                unique: true 
+            },
+    password: { type: String,
+                required: true
+             },
+    connstring: {
+                type : String
     },
-    MobNo: {
-        type: Number,
-        required: true,
-    },
-    AddmissionDate: {
-        type: Date,
-        default: Date.now,
-        set: function(value) {
-            // If the value is a valid date string, parse it and return the Date object
-            if (typeof value === 'string') {
-              const parsedDate = moment(value, 'DD-MM-YYYY');
-              return parsedDate.isValid() ? parsedDate.toDate() : value;
-            }
-            return value;
-          },
-    
-    },
-    LLRType: {
-        type: [String],
-    },
-    Total: {
-        type: Number,
-        required: true,
-    },
-    Deposite: {
-        type: Number,
-        required: true,
-    },
-    Pending: {
-        type: Number,
-    },
-    LLFee:{
+    mobno:{
         type:Number
     },
-    DLFee:{
-        type:Number
+    cname : {
+        type:String
     },
-    GForm:{
-        type:Number
+    BusinessName : {
+        type : String
     },
-    Balance:{
-        type:Number
-    }
+    BusinessAddress: {
+        type : String
+    },
+    Photo :{
+        type:Buffer
+    }    
 });
 
+
+const User = mongoose.model('user', userSchema);
 const Student = mongoose.model("Student", studentSchema);
-const FeeStructure = mongoose.model("FeeStructure", feeStructureSchema);
 
-module.exports = { Student, FeeStructure };
+
+module.exports = { Student , User };

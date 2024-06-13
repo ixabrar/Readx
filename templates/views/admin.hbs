@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.jpg" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>WHEELDATA</title>
+        <link rel="icon" href="./favicon.jpg" type="image/x-icon">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-
-    <style>
+        <style>
         @import url('https://fonts.googleapis.com/css?family=Roboto');
 
 
@@ -25,7 +26,7 @@
             padding: 0;
         }
 
-        .header {
+        #header {
             height: 60px;
             background-color: #2F1847;
         }
@@ -232,6 +233,11 @@
             display: none;
         }
 
+        .forflex{
+            display: flex;
+            flex-direction: column;
+        }
+
         /*       @media only screen and (max-width: 768px) {
     .header {
         height: auto;
@@ -307,7 +313,7 @@
             }
         }
     </style>
-    <script>
+        <script>
 
         $(document).ready(function () {
             // Handle click events on menu items
@@ -399,65 +405,71 @@
         }
 
     </script>
-</head>
+    </head>
 
-<body>
-    <div class="header">
-        <div class="mobhead">
-            <img src="{{Image}}" alt="">
-            <p id="vihical-no">{{No}}</p>
-            <div class="logout">
+    <body>
+        <div class="forflex">
+            <div id="header">
                 <a href="/logout" id="log-out"><button>LOGOUT</button></a>
+                <h2 id="username"><b>{{name}}</b></2>
             </div>
-        </div>
-        <div id="header">
-            <a href="/logout" id="log-out"><button>LOGOUT</button></a>
-            <h2 id="username"><b>{{Name}}</b></2>
-        </div>
 
-    </div>
-    <div class="main">
-        <div id="accordian">
-            <div class="logininfo">
-                <center><img src="{{Image}}" alt="image here"></center>
+                <div class="main">
+                    <div id="accordian">
+                        <div class="logininfo">
 
-                <center>
-                    <p id="vihical-no">{{No}}</p>
-                </center>
-            </div>
-            <ul class="show-dropdown main-navbar">
-                <div class="selector-active">
-                    <div class="top"></div>
-                    <div class="bottom"></div>
+                            <center><img
+                                    src="data:image/jpeg;base64,{{base64Photo}}"
+                                    alt="image here"></center>
+
+                            <center>
+                                <p id="vihical-no">{{cname}}</p>
+                            </center>
+                        </div>
+                        <ul class="show-dropdown main-navbar">
+                            <div class="selector-active">
+                                <div class="top"></div>
+                                <div class="bottom"></div>
+                            </div>
+                            <li class="active">
+                                <a onclick="change('dashboard')"><i
+                                        class="fas fa-tachometer-alt"></i>Dashboard</a>
+                            </li>
+                            <li>
+                                <a onclick="change('register')"><i
+                                        class="far fa-address-book"></i>New
+                                    Admission</a>
+                            </li>
+                            <li>
+                                <a onclick="change('update')"><i
+                                        class="far fa-clone"></i>Update
+                                    information</a>
+                            </li>
+                            <li>
+                                <a onclick="change('view')"><i
+                                        class="far fa-calendar-alt"></i>Student
+                                    Information</a>
+                            </li>
+
+                            <li>
+                                <a onclick="change('More')"><i
+                                        class="far fa-heart"></i>More</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mainbody">
+                        <iframe src="./dashboard" id="frame"
+                            frameborder="0"></iframe>
+
+                    </div>
                 </div>
-                <li class="active">
-                    <a onclick="change('dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
-                </li>
-                <li>
-                    <a onclick="change('register')"><i class="far fa-address-book"></i>New Admission</a>
-                </li>
-                <li>
-                    <a onclick="change('update')"><i class="far fa-clone"></i>Update information</a>
-                </li>
-                <li>
-                    <a onclick="change('view')"><i class="far fa-calendar-alt"></i>Student Information</a>
-                </li>
-
-                <li>
-                    <a onclick="change('More')"><i class="far fa-heart"></i>More</a>
-                </li>
-            </ul>
+            </div>
         </div>
-        <div class="mainbody">
-            <iframe src="./dashboard" id="frame" frameborder="0"></iframe>
+            <footer>
+                <div class="copyright">
+                    &copy; 2024 GCREATIX. All rights reserved.
+                </div>
+            </footer>
+        </body>
 
-        </div>
-    </div>
-    <footer>
-        <div class="copyright">
-            &copy; 2024 GCREATIX. All rights reserved.
-        </div>
-    </footer>
-</body>
-
-</html>
+    </html>

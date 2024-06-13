@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./css/style.css">
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
@@ -53,7 +51,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #ddd;
-            padding: 10px 0;
+            padding: 21px 0;
             transition: background-color 0.3s ease-in-out;
         }
 
@@ -85,68 +83,170 @@
         #pending-label:hover {
             background-color: #218c54;
         }
-    </style>
-    <script>
-          
 
- function formatDateISOToDDMMYYYY() {
-            var isoDate = "{{data.AddmissionDate}}"; // Assuming data.AddmissionDate is in ISO format
-            var date = new Date(isoDate);
-            var day = date.getDate();
-            var month = date.getMonth() + 1; // Months are zero-based
-            var year = date.getFullYear();
-
-            // Add leading zero if day or month is a single digit
-            day = day < 10 ? '0' + day : day;
-            month = month < 10 ? '0' + month : month;
-
-            var formattedDate = day + '-' + month + '-' + year;
-
-            // Set the formatted date to the content of the paragraph element
-            document.getElementById("formattedDate").textContent = formattedDate;
+        .photo {
+            height: 128px;
+            width: 128px;
+            background-color: #27ae60;
+            border-radius: 50%;
+            overflow: hidden;
+            position: relative;
         }
-    </script>
+
+        .photo img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
 </head>
 
-<body onload="formatDateISOToDDMMYYYY()">
-
+<body>
     <div class="studentinfo">
         <center>
             <h2>
-                <p id="studentname">{{data.Name}} </p>
+                <p id="studentname">{{data.ID}}: {{data.Name}}</p>
             </h2>
         </center>
         <div class="content">
             <div class="row">
-                <label for="">Student id<p>{{data.ID}} </p></label>
+                <label for="">Mobile No<p>{{data.MobNo}}</p></label>
+                <label for="">Admission Type<p>{{data.Type}}</p></label>
+                <div class="photo">
+                    <img src="data:image/jpeg;base64,{{photoBase64}}" alt="Student Photo">
+                </div>
 
-                <label for="">Mobile No<p> {{data.MobNo}}</p></label>
-
-                <label for="">LLR TYPE<P>{{data.LLRType}}</p></label>
             </div>
             <div class="row">
-                <label for="Licence Number">Licence Number <p>{{data.LicenceNo}}</p></label>
+                <label for="">Start Date <p>{{formatDate data.SAddmissionDate}}</p></label>
+                <label for="">End Date<p>{{formatDate data.EAddmissionDate}}</p></label>
+                <label for="Gender">Gender <p>{{data.gender}}</p></label>
             </div>
-
-            <div class="row">
-                <label for="">ADD Date <p id="formattedDate"></p></label>
-
-                <label for="">Admission Type <p>{{data.Type}}</p></label>
-
-                <label for="">MDL STATUS<P>{{data.MDLStatus}}</p></label>
-            </div>
-
             <div class="row">
                 <label for="">Total Fee <p>{{data.Total}}</p></label>
-
-                <label for="">Deposite Fee <p> {{data.Deposite}} </p></label>
-
-                <label for="" id="pending" style="background-color: greenyellow; color: black;">Pending Fee:-<P>
+                <label for="">Deposite Fee <p>{{data.Deposite}}</p></label>
+                <label for="" id="pending" style="background-color: greenyellow; color: black;">Pending Fee:-<p>
                         {{data.Pending}}</p></label>
             </div>
+            <div class="row">
+                 <button id="generateBtn">Generate Receipt</button>
+            </div>
         </div>
-
     </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script>
+        function formatDate(isoDate) {
+            const date = new Date(isoDate);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+        
+           const businessDetails = {{{businessDetails}}};
+           
+        function generateReceipt() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Example data (replace with your actual data)
+           const data = {
+                ID: '{{data.ID}}',
+                Name: '{{data.Name}}',
+                MobNo: '{{data.MobNo}}',
+                Type: '{{data.Type}}',
+                SAddmissionDate: '{{formatDate data.SAddmissionDate}}',
+                EAddmissionDate: '{{formatDate data.EAddmissionDate}}',
+                Total: '{{data.Total}}',
+                Deposite: '{{data.Deposite}}',
+                Pending: '{{data.Pending}}'
+            };
+            // Example business details (replace with your actual details)
+
+            const companyName = businessDetails.BusinessName;
+            const companyAddress = businessDetails.BusinessAddress;
+            const companyMobile = businessDetails.MobileNo;
+
+
+            // Set the font family and size
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(14);
+
+            // Add the title with a border and background color
+            doc.setFillColor(52, 152, 219); // Blue color
+            doc.rect(10, 5, 190, 15, 'F');
+            doc.setTextColor(255, 255, 255); // White text color
+            doc.text('PAYMENT RECEIPT', 15, 15);
+
+            // Reset text color to black
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(10);
+
+            // Add the company name
+            doc.setFont('helvetica', 'bold');
+            doc.text(companyName, 10, 25);
+
+            // Add the company address and mobile number
+            doc.setFont('helvetica', 'normal');
+            doc.text(companyAddress, 10, 30);
+            doc.text(`Mobile: ${companyMobile}`, 10, 35);
+
+            // Add the receipt number and date
+            doc.text(`Recipt Number: ${data.ID}`, 10, 45);
+            doc.text(`Date: ${data.SAddmissionDate}`, 150, 45);
+
+            // Add the horizontal line with a thicker weight
+            doc.setLineWidth(0.5);
+            doc.line(10, 50, 200, 50);
+
+            // Add the received from label and value
+            doc.setFontSize(12);
+            doc.text('Received From:', 10, 60);
+            doc.setFontSize(10);
+            doc.text(data.Name, 50, 60);
+
+            // Add the payment details table with a border and background color
+            doc.setFillColor(230, 230, 230); // Light gray color
+            doc.rect(10, 72, 190, 20, 'F');
+            doc.setTextColor(0, 0, 0); // Black text color
+            doc.text('Payment Details', 15, 78);
+            doc.setLineWidth(0.2);
+            doc.line(10, 82, 200, 82);
+            doc.text('Item', 15, 90);
+            doc.text('From', 80, 90);
+            doc.text('To', 120, 90);
+            doc.line(10, 92, 200, 92);
+            doc.text(data.Type, 15, 100);
+            doc.text(data.SAddmissionDate, 80, 100);
+            doc.text(data.EAddmissionDate, 120, 100);
+            doc.line(10, 102, 200, 102);
+
+            // Add the amount details with a larger font size and bold text
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Total', 130, 110);
+            doc.text(data.Total, 170, 110);
+            doc.text('Deposite', 130, 120);
+            doc.text(data.Deposite, 170, 120);
+            doc.text('Pending', 130, 130);
+            doc.text(data.Pending, 170, 130);
+
+            // Add the signature lines with a thicker weight
+            doc.setLineWidth(0.5);
+            doc.line(10, 135, 50, 135);
+            doc.text('Received By', 15, 140);
+            doc.line(70, 135, 110, 135);
+            doc.text('Authorized By', 75, 140);
+
+            // Save the PDF
+            doc.save(`${data.Name}_Receipt.pdf`);
+        }
+
+        // Attach the generateReceipt function to the button click event
+        document.getElementById('generateBtn').addEventListener('click', generateReceipt);
+    </script>
+    
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const app = express();
 const path = require("path");
@@ -5,7 +6,7 @@ const hbs = require("hbs");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const moment = require("moment");
-const twilio = require("twilio");
+const multer = require('multer');
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 app.use(express.static("public"));
@@ -18,7 +19,7 @@ require("./db/connection");
 
 //const Register = require("./models/register");
 //const Student = require("./models/register");
-const { Student, FeeStructure } = require("./models/register");
+const { Student, User } = require("./models/register");
 
 const port = process.env.PORT || 3000;
 
@@ -46,78 +47,94 @@ app.use(
 //middleware
 var sessionChecker = (req, res, next) => {
   console.log("inside the middleware1");
-  if (req.session.user || req.cookies.user_sid) {
-    // User is authenticated, proceed to the next middleware
+  if (req.session.name || req.cookies.user_sid) {
+    next();
+  } else {
     res.redirect("/index");
-  } else {
-    next();
   }
 };
 
-var sessionChecker2 = (req, res, next) => {
-  console.log("inside the middleware2");
-  if (req.session.user || req.cookies.user_sid) {
-    next();
-  } else {
-    res.redirect("/login");
-  }
-};
 app.get("/", (req, res) => {
-  res.redirect("/login");
+  res.redirect("/index");
 });
+
 app.get("/index", (req, res) => {
-  console.log("inside the index get request");
-  if (req.session.user || req.cookies.user_sid) {
-    res.render("index", { user: req.session.user });
-    console.log("index page rendered");
-  } else {
-    res.redirect("/login");
-  }
+  res.render("index");
 });
-app
-  .route("/login")
-  .get(sessionChecker, (req, res) => {
-    res.render("login.hbs");
-  })
-  .post(async (req, res) => {
-    const USER = "GMDS"; // Set your actual username
-    const PASS = "Naim@11223"; // Set your actual password
 
-    const username = req.body.username;
-    const password = req.body.password;
-
-    try {
-      if (username !== USER || password !== PASS) {
-        return res.redirect("/login");
-      }
-
-      // Set user information in the session
-      req.session.user = { username: USER }; // Adjust as needed
-
-      console.log("User Session:", req.session.user);
-      console.log("Redirecting to the index");
-      res.redirect("/index");
-    } catch (err) {
-      console.error(err);
-      res.redirect("/login");
+const authenticateAndLogin = async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    // Authenticate the user
+    console.log(req.body);
+    console.log(`Looking for user: ${username}`);
+    const user = await User.findOne({ username });
+    console.log("User found:", user);
+    req.session.connstring = user.connstring;
+    req.session.name = user.name;
+    req.session.cname = user.cname;
+    req.session.Photo = user.Photo;
+    req.session.BusinessDetails = {
+      BusinessName: user.BusinessName,
+      BusinessAddress: user.BusinessAddress,
+      MobileNo: user.mobno
+  };
+   
+    if (!user) {
+      console.log("User not found");
+      throw new Error('User not found');
     }
-  });
-app.get("/render", sessionChecker2, async (req, res) => {
-  console.log("Accessed /render route");
-  const Image = "/Brezza.jpg";
-  const No = "MH24AW7699";
-  const Name = "Naim Shabarfiwale";
+    if (user.password !== password) {
+      console.log("Invalid credentials");
+      throw new Error('Invalid credentials');
+    }
+    res.redirect('/render');
+  } catch (err) {
+    // Authentication failed, render error message
+    console.error("Error during authentication:", err);
+    res.render('index', { error: err.message });
+  }
+};
+
+// Route for handling login requests
+app.post('/login', async (req, res) => {
   try {
+      console.log("Accessing the login endpoint!!");
+      await connection.connectToDatabase(process.env.STR);
+      
+      await authenticateAndLogin(req, res);
+      console.log("Authentication successful!");
+  } catch (error) {
+      console.error("Error during login:", error);
+      res.render('index', { error: error.message });
+  }
+});
+
+
+app.get("/render", sessionChecker, async (req, res) => {
+  console.log("Accessed /render route");
+  const cname = req.session.cname;
+  const name = req.session.name;
+  const { Photo } = req.session;
+  const base64Photo = Photo ? Buffer.from(Photo.data).toString('base64') : null;
+  //const Photo =  req.session.Photo ? req.session.Photo.toString('base64') :  null;
+     console.log(cname);
+     console.log(name);
+     console.log(Photo);
+    
+
+  try {
+     const connstring = req.session.connstring;
+     
+    console.log("User connstring:", connstring);
     // Specify the new connection string dynamically
-    await connection.connectToDatabase(
-      "mongodb+srv://Gulshan_Naim:Naim%40499@gulshan-naim.9oiq5ea.mongodb.net/j"
-    );
+    await connection.connectToDatabase(connstring);
 
     // Access the current connection string
     console.log("Current connection string:", connection.getConnectionString());
-
+    
     // Render your view or perform other actions
-    res.render("admin", { Image, No, Name });
+    res.render("admin", { name, cname, base64Photo });
   } catch (error) {
     console.error("Connection failed:", error);
     // Handle the error or render an error page
@@ -125,28 +142,6 @@ app.get("/render", sessionChecker2, async (req, res) => {
   }
 });
 
-app.get("/renderoff", sessionChecker2, async (req, res) => {
-  console.log("Accessed /render route");
-  const Image = "/venue.jpg";
-  const No = "MH24BR7699";
-  const Name = "Junaid Shaikh";
-  try {
-    // Specify the new connection string dynamically
-    await connection.connectToDatabase(
-      "mongodb+srv://Junaid_Shaikh:Gulshan%40Junaid@cluster0.dgrgpxv.mongodb.net/GMDS"
-    );
-
-    // Access the current connection string
-    console.log("Current connection string:", connection.getConnectionString());
-
-    // Render your view or perform other actions
-    res.render("admin", { Image, No, Name });
-  } catch (error) {
-    console.error("Connection failed:", error);
-    // Handle the error or render an error page
-    res.status(500).send("Internal Server Error");
-  }
-});
 ////////////////////////////////////////////
 app.get("/admin", (req, res) => {
   res.render("admin");
@@ -177,9 +172,7 @@ app.get("/register", async (req, res) => {
   }
 });
 
-app.get("/login", (req, res) => {
-  res.render("login");
-});
+
 app.get("/filter/askMonth", (req, res) => {
   res.render("askMonth");
 });
@@ -202,8 +195,8 @@ app.get("/searchData", (req, res) => {
 app.get("/delete", (rqs, res) => {
   res.render("delete");
 });
-app.get("/test", (rqs, res) => {
-  res.render("test");
+app.get("/signup", (rqs, res) => {
+  res.render("signup");
 });
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get("/logout", (req, res) => {
@@ -234,8 +227,8 @@ app.get("/dashboard", async (req, res) => {
         $match: {
           $expr: {
             $and: [
-              { $eq: [{ $month: "$AddmissionDate" }, currentMonth] },
-              { $eq: [{ $year: "$AddmissionDate" }, currentYear] },
+              { $eq: [{ $month: "$SAddmissionDate" }, currentMonth] },
+              { $eq: [{ $year: "$SAddmissionDate" }, currentYear] },
             ],
           },
         },
@@ -247,36 +240,12 @@ app.get("/dashboard", async (req, res) => {
         },
       },
     ]);
-    const totalPending = await FeeStructure.aggregate([
-      {
-        $group: {
-          _id: null,
-          totalPending: { $sum: "$Pending" },
-        },
-      },
-    ]);
 
-    const result = await FeeStructure.aggregate([
-      {
-        $group: {
-          _id: null, // Group all documents together
-          totalDLFee: { $sum: "$DLFee" },
-          totalLLFee: { $sum: "$LLFee" },
-          totalGForm: { $sum: "$GForm" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          grandTotal: { $add: ["$totalDLFee", "$totalLLFee", "$totalGForm"] },
-        },
-      },
-    ]);
     // Aggregation for doughnut chart based on LLRType
     const doughnutChartData = await Student.aggregate([
       {
         $group: {
-          _id: "$LLRType",
+          _id: "$Type",
           count: { $sum: 1 },
         },
       },
@@ -286,8 +255,8 @@ app.get("/dashboard", async (req, res) => {
     const barChartData = await Student.aggregate([
       {
         $project: {
-          month: { $month: "$AddmissionDate" },
-          year: { $year: "$AddmissionDate" },
+          month: { $month: "$SAddmissionDate" },
+          year: { $year: "$SAddmissionDate" },
         },
       },
       {
@@ -301,48 +270,55 @@ app.get("/dashboard", async (req, res) => {
 
     const totalStudentCount = totalno.length > 0 ? totalno[0].totalCount : 0;
     const totalStudentsCurrentMonth = monthlyStudentCount.length > 0 ? monthlyStudentCount[0].totalCount : 0;
-    const TotalPendingFee =  totalPending.length > 0 ? totalPending[0].totalPending : 0;
     const doughnutLabels = doughnutChartData.map((entry) => entry._id);
     const doughnutValues = doughnutChartData.map((entry) => entry.count);
 
     // Preparing data for bar chart
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
     const barLabels = barChartData
       .filter((item) => item._id.month !== null && item._id.year !== null)
-      .map((item) => `${item._id.month}` - `${item._id.year}`);
+      .map((item) => {
+        const monthName = monthNames[item._id.month - 1]; // Adjust month index to 0-based
+        return `${monthName} ${item._id.year}`;
+      });
+
     const barValues = barChartData
       .filter((item) => item._id.month !== null && item._id.year !== null)
       .map((item) => item.count);
 
     console.log(`Total Number of Students: ${totalStudentCount}`);
-    console.log("total pending fee:", TotalPendingFee);
+    console.log(`Total Number of Students of current month: ${totalStudentsCurrentMonth}`);
     console.log("doughnutlabels:", doughnutLabels);
     console.log("doughnutValues: ", doughnutValues);
     console.log("barLabels:", barLabels);
     console.log("barValues:", barValues);
 
-    if (result.length > 0) {
-      const { grandTotal } = result[0];
-      // Passing both datasets to the template
-      res.render("dashboard", {
-        totalStudentCount,
-        totalStudentsCurrentMonth,
-        TotalPendingFee,
-        grandTotal,
-        doughnutLabels,
-        doughnutValues, // Data for doughnut chart
-        barLabels,
-        barValues, // Data for bar chart
-      });
-    }
+    // Passing both datasets to the template
+    res.render("dashboard", {
+      totalStudentCount,
+      totalStudentsCurrentMonth,
+      doughnutLabels,
+      doughnutValues, // Data for doughnut chart
+      barLabels,
+      barValues, // Data for bar chart
+    });
   } catch (error) {
     console.error("Error retrieving data:", error);
     res.status(500).send("Server Error");
   }
 });
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.post("/register", async (req, res) => {
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
+app.post("/register", upload.single('photo'), async (req, res) => {
   try {
     console.log("Received POST request to /register");
     console.log("Request Body:", req.body);
@@ -352,130 +328,80 @@ app.post("/register", async (req, res) => {
       ID,
       Name,
       MobNo,
-      LicenceNo,
-      LLRType,
-      Type,
-      AddmissionDate,
+      SAddmissionDate,
+      EAddmissionDate,
       Total,
       Deposite,
       Pending,
-      MDLStatus,
+      gender,
+      Type
     } = req.body;
+
+    console.log("Extracted fields from request body:", {
+      ID,
+      Name,
+      MobNo,
+      SAddmissionDate,
+      EAddmissionDate,
+      Total,
+      Deposite,
+      Pending,
+      gender,
+      Type
+    });
 
     // Convert ID to integer
     const sid = parseInt(ID);
+    if (isNaN(sid)) {
+      throw new Error("Invalid ID format");
+    }
+    console.log("Parsed ID:", sid);
+
+    // Convert the uploaded photo to a buffer
+    let photoBuffer = null;
+    if (req.file) {
+      photoBuffer = req.file.buffer;
+      console.log("Photo uploaded, size:", photoBuffer.length);
+    } else {
+      console.log("No photo uploaded");
+    }
 
     // Create a new Student document
     const studentData = new Student({
       ID: sid,
       Name,
       MobNo,
-      LicenceNo,
-      LLRType,
-      Type,
-      AddmissionDate,
+      SAddmissionDate,
+      EAddmissionDate,
       Total,
       Deposite,
       Pending,
-      MDLStatus,
-    });
+      Photo: photoBuffer,
+      gender,
+      Type
+  });
 
-    // Save the student document to the database
+    console.log("Created Student document:", studentData);
     const registeredStudent = await studentData.save();
-
-    // Create a new FeeStructure document
-    const feeStructureData = new FeeStructure({
-      ID: sid,
-      Name,
-      MobNo,
-      LLRType,
-      AddmissionDate,
-      Total,
-      Deposite,
-      Pending,
-    });
-
-    calculateFees(LLRType, feeStructureData);
-
-    // Save the feeStructure document to the database
-    const feeRegistered = await feeStructureData.save();
-
-    console.log("Fee structure data entered successfully:", feeRegistered);
     console.log("Student registered successfully:", registeredStudent);
-
-    /*
-    // Send SMS to the registered user
-    const message = `Subject: Registration Confirmation - Your ID: ${ID}.
-    Dear ${Name}.,
-    Your registration with GMDS is confirmed. Your assigned ID is: ${ID}.
-    Keep this ID for future reference.
-    Thank you,
-    GMDS OFFICIAL`;
-
-    const formatMobNo =  MobNo;
-
-    // Send SMS and log the response
-    twilioClient.messages.create({
-      body: message,
-      from: twilioPhoneNumber,
-      to: MobNo,
-    })
-    .then((message) => {
-      console.log('SMS sent successfully:', message.sid);
-      // Redirect back after successful registration and SMS
-      res.redirect("back");
-    })
-    .catch((error) => {
-      console.error('Error sending SMS:', error);
-      res.status(500).send('Error sending SMS');
-    });*/
+    //res.render("render");
+    //res.status(201).send("Student registered successfully");
   } catch (error) {
     console.error("Error during registration:", error.message);
+    console.error("Stack trace:", error.stack);
     res.status(400).send(`Bad Request: ${error.message}`);
   }
 });
 
-function calculateFees(LLRType, feeStructureData) {
-  switch (LLRType) {
-    case "MCWG / LMV":
-    case "MCWG / LMV-TR":
-      feeStructureData.LLFee = 350;
-      feeStructureData.DLFee = 1100;
-      feeStructureData.GForm = 500;
-      break;
-    case "LMV":
-      feeStructureData.LLFee = 150;
-      feeStructureData.DLFee = 1100;
-      feeStructureData.GForm = 350;
-      break;
-    case "LMV-TR":
-      feeStructureData.LLFee = 150;
-      feeStructureData.DLFee = 1100;
-      feeStructureData.GForm = 400;
-      break;
-    case "ONLY-TRAINING":
-      feeStructureData.LLFee = 0;
-      feeStructureData.DLFee = 0;
-      feeStructureData.GForm = 0;
-      break;
-    // Add more cases for other LLRTypes if needed
-    default:
-      break;
-  }
-  feeStructureData.Balance =
-    feeStructureData.Total -
-    feeStructureData.Pending -
-    feeStructureData.DLFee -
-    feeStructureData.LLFee -
-    feeStructureData.GForm;
-}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 app.get("/viewAll", async (req, res) => {
   try {
     const data = await Student.find(); // Fetch all data from MongoDB
 
     if (data.length > 0) {
-      console.log(data); // Log the data retrieved from MongoDB
+      console.log(data);
+     
       res.render("AllData", { data }); // Render the allData.hbs template with the retrieved data
     } else {
       console.log("No data found in the database");
@@ -501,8 +427,11 @@ app.post("/view", async (req, res) => {
     }
 
     if (data) {
-      console.log(data); // Log the data retrieved from MongoDB
-      res.render("data", { data }); // Render the data.hbs template with the retrieved data
+      console.log(data);
+      const businessDetails = req.session.BusinessDetails;
+      // Convert photo buffer to base64-encoded string
+      const photoBase64 = data.Photo ? data.Photo.toString('base64') : null;
+      res.render("data", { data, photoBase64 , businessDetails: JSON.stringify(businessDetails) }); // Render the data.hbs template with the retrieved data
     } else {
       console.log(
         ID ? `No data found for ID: ${ID}` : `No data found for MobNo: ${MobNo}`
@@ -514,6 +443,7 @@ app.post("/view", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 
 app.post("/update", async (req, res) => {
   const { ID, MobNo } = req.body;
@@ -550,15 +480,24 @@ app.post("/submitform", async (req, res) => {
       ID,
       Name,
       MobNo,
-      LicenceNo,
-      LLRType,
+      gender,
+      SAddmissionDate,
+      EAddmissionDate,
       Type,
-      AddmissionDate,
       Total,
       Deposite,
       Pending,
-      MDLStatus,
+      Photo
     } = req.body;
+
+    // Convert date strings to ISO format
+    const convertToISODate = (dateString) => {
+      const [day, month, year] = dateString.split('-');
+      return new Date(`${year}-${month}-${day}`);
+    };
+
+    const sAdmissionDateISO = convertToISODate(SAddmissionDate);
+    const eAdmissionDateISO = convertToISODate(EAddmissionDate);
 
     console.log("Requested Data:", req.body);
 
@@ -568,58 +507,23 @@ app.post("/submitform", async (req, res) => {
         $set: {
           Name,
           MobNo,
-          LicenceNo,
-          LLRType,
+          gender,
+          SAddmissionDate: sAdmissionDateISO,
+          EAddmissionDate: eAdmissionDateISO,
           Type,
-          AddmissionDate,
           Total,
           Deposite,
           Pending,
-          MDLStatus,
+          Photo
         },
       },
       { new: true }
     );
 
-    const result2 = await FeeStructure.findOneAndUpdate(
-      { ID },
-      {
-        $set: {
-          ID,
-          Name,
-          MobNo,
-          LLRType,
-          AddmissionDate,
-          Total,
-          Deposite,
-          Pending,
-        },
-      },
-      { new: true }
-    );
-
-    if (result1 && result2) {
-      // Calculate new balance using the updated values
-      const updatedBalance = calculatebalance(result2);
-
-      // Update the FeeStructure document with the new balance
-      const updatedResult2 = await FeeStructure.findOneAndUpdate(
-        { ID },
-        { $set: { Balance: updatedBalance } },
-        { new: true }
-      );
-
+    if (result1) {
       console.log("Data in Student");
-      console.log("Student Deposite", result1.Deposite);
-      console.log("Student Pending", result1.Pending);
-      console.log("Data in FeeStructure");
-      console.log("FeeStructure Deposite", updatedResult2.Deposite);
-      console.log("FeeStructure Pending", updatedResult2.Pending);
-      console.log("FeeStructure DLFee", updatedResult2.DLFee);
-      console.log("FeeStructure LLFee", updatedResult2.LLFee);
-      console.log("FeeStructure GForm", updatedResult2.GForm);
-      console.log("FeeStructure Balance", updatedResult2.Balance);
-
+      console.log("Student Deposite", result1.Type);
+      console.log("Student Pending", result1.Name);
       res.redirect("back");
     } else {
       res.status(404).send(`Student with ID ${ID} not found`);
@@ -630,15 +534,8 @@ app.post("/submitform", async (req, res) => {
   }
 });
 
-function calculatebalance(feeData) {
-  return (
-    feeData.Total -
-    feeData.Pending -
-    feeData.DLFee -
-    feeData.LLFee -
-    feeData.GForm
-  );
-}
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -665,14 +562,13 @@ app.post("/deleteForm", async (req, res) => {
       ID,
       Name,
       MobNo,
-      LicenceNo,
-      LLRType,
-      Type,
-      AddmissionDate,
+      SAddmissionDate,
+      EAddmissionDate,
       Total,
       Deposite,
       Pending,
-      MDLStatus,
+      gender,
+      Type
     } = req.body;
 
     console.log("Requested Data:", req.body);
@@ -681,38 +577,21 @@ app.post("/deleteForm", async (req, res) => {
       { ID },
       {
         $set: {
-          Name,
-          MobNo,
-          LicenceNo,
-          LLRType,
-          Type,
-          AddmissionDate,
-          Total,
-          Deposite,
-          Pending,
-          MDLStatus,
+      Name,
+      MobNo,
+      SAddmissionDate,
+      EAddmissionDate,
+      Total,
+      Deposite,
+      Pending,
+      gender,
+      Type
         },
       },
       { new: true } // Return the modified document
     );
-    const result2 = await FeeStructure.deleteOne(
-      { ID },
-      {
-        $set: {
-          ID,
-          Name,
-          MobNo,
-          LLRType,
-          AddmissionDate,
-          Total,
-          Deposite,
-          Pending,
-        },
-      },
-      { new: true } // Return the modified document
-    );
-
-    if (result && result2) {
+    
+    if (result) {
       res.redirect("back");
     } else {
       res.status(404).send(`Student with ID ${ID} not found`);
@@ -744,7 +623,7 @@ app.get("/displayData", async (req, res) => {
       console.log("End Date:", endDate);
 
       students = await Student.find({
-        AddmissionDate: { $gte: startDate, $lte: endDate },
+        SAddmissionDate: { $gte: startDate, $lte: endDate },
       });
 
       // Format the selectedMonth to display the month name
@@ -764,41 +643,77 @@ app.get("/displayData", async (req, res) => {
   }
 });
 
-app.get("/displayFeeData", async (req, res) => {
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+app.post("/signup", upload.single('photo'), async (req, res) => {
   try {
-    const { month } = req.query;
+    await connection.connectToDatabase("mongodb+srv://AbrarShaikh:Andy%40998@cpp.csyvxe0.mongodb.net/");
+    console.log("Received POST request to /signup");
+    console.log("Request Body:", req.body);
 
-    let FeeData;
-    let formattedMonth;
+    // Validate request body parameters
+    const {
+      name,
+      mobno,
+      username,
+      password,
+      cname,
+      connstring,
+      BusinessName,
+      BusinessAddress
+    } = req.body;
 
-    if (month) {
-      // If a specific month is provided, filter FeeData by that month
-      const startDate = moment(month, "YYYY-MM").startOf("month").toDate();
-      const endDate = moment(month, "YYYY-MM").endOf("month").toDate();
+    console.log("Extracted fields from request body:", {
+      name,
+      mobno,
+      username,
+      password,
+      cname,
+      connstring,
+      BusinessName,
+      BusinessAddress,
+      Photo: req.file ? req.file.buffer.length : null
+    });
 
-      console.log("Start Date:", startDate);
-      console.log("End Date:", endDate);
-
-      FeeData = await FeeStructure.find({
-        AddmissionDate: { $gte: startDate, $lte: endDate },
-      });
-
-      // Format the selectedMonth to display the month name
-      formattedMonth = moment(month, "YYYY-MM").format("MMMM");
-      console.log("Filtered FeeData:", FeeData);
+    // Convert the uploaded photo to a buffer
+    let photoBuffer = null;
+    if (req.file) {
+      photoBuffer = req.file.buffer;
+      console.log("Photo uploaded, size:", photoBuffer.length);
     } else {
-      // If no specific month is provided, fetch all FeeData
-      FeeData = await Student.find({});
+      console.log("No photo uploaded");
     }
 
-    console.log("Final FeeData Array:", FeeData);
+    // Create a new User document
+    const userData = new User({
+      name,
+      mobno,
+      username,
+      password,
+      cname,
+      connstring,
+      BusinessName,
+      BusinessAddress,
+      Photo: photoBuffer,
+    });
 
-    res.render("displayData", { FeeData, selectedMonth: formattedMonth }); // Pass formattedMonth to the template
+    console.log("Created User document:", userData);
+    const registeredUser = await userData.save();
+    console.log("User registered successfully:", registeredUser);
+    
+    // Respond with success message
+    res.status(201).send("User registered successfully");
   } catch (error) {
-    console.error("Error fetching FeeData:", error);
-    res.status(500).send("Internal Server Error");
+    console.error("Error during registration:", error.message);
+    console.error("Stack trace:", error.stack);
+    res.status(400).send(`Bad Request: ${error.message}`);
   }
 });
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 app.listen(port, () => {

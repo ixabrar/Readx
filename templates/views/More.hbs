@@ -120,7 +120,7 @@
     </style>
 </head>
 <body>
-    <h1>More Apps</h1>
+    <h1>Others</h1>
 
     <div class="apps-container">
         <!-- App 1 -->
@@ -130,36 +130,27 @@
     </a>
 
 
-        <!-- App 2 -->
-        <a href="/filter/askMonth" class="app" onclick="openApp('App2')">
-            <img src="https://cdn-icons-png.flaticon.com/128/3845/3845878.png" alt="App 2">
-            <div class="app-title">ALL FEE</div>
-        </a>
-
+        
         <!-- App 3 -->
         <a href="/askMonth" class="app" onclick="openApp('App3')">
             <img src="https://cdn-icons-png.flaticon.com/128/765/765287.png" alt="App 3">
             <div class="app-title">Filter Data</div>
         </a>
-
-        <!-- App 4 -->
-        <a href="/temdata" class="app" onclick="openApp('App4')">
-            <img src="https://cdn-icons-png.flaticon.com/128/2779/2779847.png" alt="App 4">
-            <div class="app-title">Admin</div>
-        </a>
+        
+        
 
         <!-- App 5 -->
         <a href="/delete" class="app" onclick="openApp('App5')">
             <img src="https://cdn-icons-png.flaticon.com/128/4460/4460270.png" alt="App 5">
             <div class="app-title">DELETE RECORDS</div>
         </a>
+        <!-- App 2--> 
+        <a class="app">
+            <img src="https://cdn-icons-png.flaticon.com/128/3845/3845878.png" alt="App 2">
+            <div class="app-title">ALL FEE</div>
+        </a>
     </div>
        
-
-    <div class="panel" id="appPanel">
-    <div class="close-icon" onclick="closePanel()"></div>
-    <div id="panelContent"></div>
-</div>
 
    
 
@@ -184,11 +175,6 @@
             }
         }
 
-        function closePanel() {
-            // Close the panel or handle other close actions
-            document.getElementById('appPanel').classList.remove('open');
-            document.getElementById('panelContent').innerHTML = ''; // Clear the content
-        }
         </script>
 
    

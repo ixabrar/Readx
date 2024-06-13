@@ -116,30 +116,28 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>MobNo</th>
-                    <th>LicenceNo</th>
-                    <th>LLRType</th>
+                    <th>Gender</th>
+                    <th>Start AddmissionDate</th>     
+                    <th>End AddmissionDate</th>
                     <th>Type</th>
-                    <th>AddmissionDate</th>
                     <th>Total</th>
                     <th>Deposite</th>
                     <th>Pending</th>
-                    <th>MDLStatus</th>
                 </tr>
             </thead>
             <tbody>
                 {{#each students}}
                     <tr>
-                        <td>{{this.ID}}</td>
-                        <td>{{this.Name}}</td>
-                        <td>{{this.MobNo}}</td>
-                        <td>{{this.LicenceNo}}</td>
-                        <td>{{this.LLRType}}</td>
-                        <td>{{this.Type}}</td>
-                        <td>{{formatDate AddmissionDate}}</td>
-                        <td>{{this.Total}}</td>
-                        <td>{{this.Deposite}}</td>
-                        <td>{{this.Pending}}</td>
-                        <td>{{this.MDLStatus}}</td>
+                       <td>{{ID}}</td>
+                    <td>{{Name}}</td>
+                    <td>{{MobNo}}</td>
+                    <td>{{gender}}</td>
+                    <td>{{formatDate this.SAddmissionDate}}</td>
+                    <td>{{formatDate this.EAddmissionDate}}</td>
+                    <td>{{Type}}</td>
+                    <td>{{Total}}</td>
+                    <td>{{Deposite}}</td>
+                    <td>{{Pending}}</td>
                     </tr>
                 {{/each}}
             </tbody>

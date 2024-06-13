@@ -1,18 +1,4 @@
 const mongoose = require('mongoose');
-
-
-/*
-mongoose.connect("mongodb+srv://AbrarShaikh:Andy%40998@cpp.csyvxe0.mongodb.net/GULSHAN_2024",
-//mongoose.connect("mongodb+srv://Junaid_Shaikh:Gulshan%40Junaid@cluster0.dgrgpxv.mongodb.net/GMDS", 
-{
-    
-}).then(() => {
-    console.log('Connection successful');
-}).catch((error) => {
-    console.error('Connection failed:', error);
-});
-*/
-
 let connectionString;
 
 module.exports = {
@@ -21,12 +7,16 @@ module.exports = {
             // If a connection is open, close it before opening a new one
             await mongoose.connection.close();
         }
-
+        console.log("Inside the connectToDatabase function");
         connectionString = newConnectionString;
-
-        return mongoose.connect(connectionString, {
-          
-        });
+        try {
+            await mongoose.connect(connectionString, {
+            });
+            console.log("Connected to MongoDB");
+        } catch (error) {
+            console.error("Error connecting to MongoDB:", error);
+            throw error;
+        }
     },
     getConnectionString: function () {
         return connectionString;

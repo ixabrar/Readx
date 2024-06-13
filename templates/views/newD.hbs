@@ -96,39 +96,35 @@
                 <div>
                     <h2>Edit Personal Information</h2>
                     <form id="studentForm">
-                        <label for="studentName">Student Name:</label>
-                        <input type="text" id="Name" name="Name" value="{{ data.Name }}" required tabindex="1">
-
                         <label for="studentID">Student ID:</label>
                         <input type="number" id="ID" name="ID" value="{{ data.ID }}" readonly tabindex="2">
 
-                        <label for="licenceNumber">Licence Number:</label>
-                        <input type="text" id="LicenceNo" name="LicenceNo" value="{{ data.LicenceNo }}"
-                            required tabindex="3">
+                        <label for="studentName">Student Name:</label>
+                        <input type="text" id="Name" name="Name" value="{{ data.Name }}" required tabindex="1">
 
-                        <label for="mobNumber">Mobile Number:</label>
-                        <input type="text" id="MobNo" name="MobNo" value="{{ data.MobNo }}" required tabindex="4">
+                        <label for="licenceNumber">Mobile Number:</label>
+                        <input type="text" id="MobNo" name="MobNo" value="{{ data.MobNo }}"
+                            required tabindex="3">
 
                         <label for="fees">total Fees: </label>
                         <input type="text" id="Total" name="Total" value="{{ data.Total }}" required tabindex="5">
-
                     </form>
                 </div>
                 <div>
                     <h2>Edit Admission Information</h2>
 
                     <label for="admissionDate">Admission Date:</label>
-                    <input type="text" class="form-input" name="AddmissionDate" id="add_date"
-                        value="{{data.AddmissionDate}}" tabindex="6">
+                    <input type="text" class="form-input" name="SAddmissionDate" id="add_date"
+                        value="{{formatDate this.data.SAddmissionDate}}" tabindex="6" readonly>
 
-                    <label for="type">Admission Type:</label>
-                    <input type="text" name="Type" value="{{data.Type}}" readonly tabindex="7">
+                    <label for="type">Last Date</label>
+                    <input type="text" name="EAddmissionDate" value="{{formatDate this.data.EAddmissionDate}}" readonly tabindex="7">
 
-                    <label for="llrType">LLR Type:</label>
-                    <input type="text" name="LLRType" value="{{ data.LLRType }}" readonly tabindex="8">
+                    <label for="llrType">Addmission Type:</label>
+                    <input type="text" name="Type" value="{{ data.Type }}" readonly tabindex="8">
 
-                    <label for="status">MDL STAUTS:</label>
-                    <input type="text" name="MDLStatus" value="{{data.MDLStatus}}" tabindex="9">
+                    <label for="status">Gender:</label>
+                    <input type="text" name="gender" value="{{ data.gender }}" tabindex="9" readonly>
 
 
                     <div class="FEES">
@@ -149,6 +145,14 @@
 
 </body>
 <script>
+    function formatDate(isoDate) {
+            const date = new Date(isoDate);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const formattedDate = ${day}-${month}-${year};
+            return formattedDate;
+        }
     function Pendingfee() {
         var Totalfee = document.getElementById('Total').value;
         var Deposite = document.getElementById('Deposite').value;

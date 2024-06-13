@@ -1,527 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WHEELDATA</title>
-    <link rel="icon"  href="./favicon.jpg" type="image/x-icon">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <title>Gcreatix Login</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            zoom: 90%;
-        }
-
-        .main {
+            background-color: #f0f2f5;
+            font-family: Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
-
-        .cars-container {
+        .login-container {
             display: flex;
-        }
-
-        .box {
-            height: 400px;
-            width: 300px;
-            background-color: #f7f7f7;
-            margin: 20px;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .box:hover {
-            transform: scale(1.05);
-        }
-
-        .img {
-            height: 200px;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 15px 15px 0 0;
-        }
-
-        .car-no {
-            padding: 10px;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .log-btn {
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .log-btn input {
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 16px;
-        }
-
-        .log-btn input:hover {
-            background-color: #2980b9;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            float: right;
-        }
-
-        .logo img {
-            height: 500px;
-            width: 500px;
-            margin: 20px;
-            border-radius: 15px;
-        }
-
-        /* Popup Form Styles */
-        .popup-form {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             background-color: #fff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            z-index: 999;
-            width: 400px;
-            text-align: center;
-            font-size: 18px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
         }
-
-        .popup-form .popup-header {
+        .business-details {
+            padding: 20px;
+            background-color: #000000;
+            text-align: center;
+            color: white;
+        }
+        .business-details img {
+            max-width: 200px;
             margin-bottom: 20px;
         }
-
-        .popup-form label {
+        .business-details h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .business-details p {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .business-details .contact-info {
+            font-size: 14px;
+            color: #ffffff;
+        }
+        .login-form {
+            padding: 20px;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-form h2 {
+            color: #1c1e21;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .login-form input {
+            border: 1px solid #dddfe2;
+            border-radius: 4px;
+            font-size: 16px;
+            padding: 12px;
+            width: 90%;
+            margin-bottom: 10px;
+        }
+        .login-form button {
+            background-color: #1877f2;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px;
+            width: 100%;
+        }
+        .login-form a {
+            color: #1877f2;
             display: block;
-            margin-bottom: 15px;
+            margin-top: 20px;
+            text-decoration: none;
         }
-
-        .popup-form input {
-            width: calc(100% - 20px);
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        .popup-form button {
-            width: calc(100% - 20px);
-            padding: 15px;
-            background-color: #3498db;
-            color: #fff;
+        .login-form hr {
             border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 18px;
-            box-sizing: border-box;
+            border-top: 1px solid #dddfe2;
+            margin: 20px 0;
         }
-
-        .popup-form button:hover {
-            background-color: #2980b9;
-        }
-
-        .popup-image {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-bottom: 20px;
-        }
-
-
-        popup-form {
-            /* ... Existing styles ... */
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            /* Gradient background */
+        .login-form .create-account {
+            background-color: #42b72a;
             color: #fff;
-            /* Text color */
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-            /* Slightly darker box-shadow */
+            display: inline-block;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 12px 24px;
+            text-decoration: none;
         }
-
-        .popup-form .popup-header {
-            /* ... Existing styles ... */
-            color: #fff;
-            /* Header text color */
-        }
-
-        .popup-form label {
-            /* ... Existing styles ... */
-            color: #fff;
-            /* Label text color */
-        }
-
-        .popup-form input {
-            /* ... Existing styles ... */
-            color: #333;
-            /* Input text color */
-            background-color: #fff;
-            /* Input background color */
-        }
-
-        .popup-form button {
-            /* ... Existing styles ... */
-            background-color: #fff;
-            /* Button background color */
-            color: #3498db;
-            /* Button text color */
-        }
-
-        .popup-form button:hover {
-            background-color: #2980b9;
-            /* Button hover background color */
-            color: black;
-        }
-
-        .popup-image {
-            border: 5px solid #fff;
-            /* White border around the image */
-        }
-
-        /* Your existing CSS styles */
-
-        /* Your existing CSS styles */
-
-        /* Media query for smaller devices */
-        /* Media query for smaller devices */
-        @media only screen and (max-width: 768px) {
-
-            /* Adjustments for smaller screens */
-            .header {
-                height: auto;
-            }
-
-            .logo {
-                display: none;
-            }
-
-            #log-out button {
-                float: none;
-                margin: 10px auto;
-            }
-
-            #username {
-                float: none;
-                text-align: center;
-                margin: 10px auto;
-            }
-
-            .logininfo {
-                height: auto;
-            }
-
-            .logininfo img {
-                height: 120px;
-            }
-
-            #accordian {
-                width: 100%;
-                float: none;
-            }
-
-            .main {
-                flex-direction: column;
-            }
-
-            .mainbody {
-                width: 100%;
-                overflow-x: auto;
-                /* Add horizontal scroll if needed */
-            }
-
-            #frame {
-                width: 100%;
-                height: auto;
-            }
-
-            .box {
-                height: 271px;
-                width: 180px;
-                background-color: #f7f7f7;
-                margin: 6px;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease-in-out;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .img {
-                height: 186px;
-                width: 100%;
-                overflow: hidden;
-            }
-
-            .img img {
-                width: 100%;
-                /* Maintain full width */
-                height: 100%;
-                /* Maintain aspect ratio */
-                object-fit: cover;
-                border-radius: 10px 10px 0 0;
-                /* Adjust the border radius */
-            }
-
-            .car-no {
-                padding: 5px;
-                /* Decrease padding */
-                text-align: center;
-                font-size: 14px;
-                /* Decrease font size */
-            }
-
-            .log-btn {
-                margin-top: 5px;
-                /* Decrease margin */
-            }
-
-            .log-btn input {
-                padding: 5px 10px;
-                font-size: 14px;
-                height: auto;
-                width: 100px;
-            }
-        }
-
-        @media only screen and (min-width: 767px) and (max-width: 1020px) {
-
-            .logo img {
-                height: 300px;
-                width: 300px;
-            }
-
-            .box {
-                height: 271px;
-                width: 180px;
-                background-color: #f7f7f7;
-                margin: 6px;
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease-in-out;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .car-no {
-                padding: 5px;
-                /* Decrease padding */
-                text-align: center;
-                font-size: 14px;
-                /* Decrease font size */
-            }
-
-            .log-btn {
-                margin-top: 5px;
-                /* Decrease margin */
-            }
-
-            .log-btn input {
-                padding: 5px 10px;
-                font-size: 14px;
-                height: auto;
-                width: 100px;
-            }
-
-        }
-
-
-
-
-        /* Add more media queries as needed */
-
-
-        /* Add more media queries as needed */
     </style>
-    <script>
-
-        document.addEventListener('DOMContentLoaded', function () {
-            document.addEventListener('contextmenu', function (event) {
-                event.preventDefault();
-            });
-        });
-
-
-        $(document).ready(function () {
-            $("#box1").click(function () {
-                // Set a hidden input value or use an AJAX request to send the information to the server
-                // In this example, let's use a hidden input field with the name "selectedDatabase"
-                $("input[name='selectedDatabase']").val("box1");
-                // Trigger the form submission
-                $("form#loginForm").submit();
-            });
-
-            $("#box2").click(function () {
-                $("input[name='selectedDatabase']").val("box2");
-                $("form#loginForm").submit();
-            });
-        });
-
-
-        /*
-        function checkPassword() {
-            // Get the entered password
-            var enteredPassword = document.getElementById('password').value;
-    
-            // Check passwords and open corresponding websites
-            if (enteredPassword === 'Naim@7699') {
-                window.open('https://www.youtube.com', '_blank');
-            } else if (enteredPassword === 'Junaid@7699') {
-                window.open('https://www.instagram.com', '_blank');
-            } else {
-                // Show an alert message for incorrect password
-                alert('Incorrect password. Please try again.');
-            }
-    
-            // Close the popup
-            document.getElementById('popup').style.display = 'none';
-        }*/
-
-
-        function openPopup1() {
-            var popup = document.getElementById('popup1');
-            popup.style.display = 'block';
-        }
-
-        function openPopup2() {
-            var popup = document.getElementById('popup2');
-            popup.style.display = 'block';
-        }
-        function closepopup2() {
-            var popup = document.getElementById('popup2');
-            popup.style.display = 'none';
-        }
-        function closepopup1() {
-            var popup = document.getElementById('popup1');
-            popup.style.display = 'none';
-        }
-
-
-        function checkPassword1() {
-            var enteredpass = document.getElementById('password').value;
-
-            if (enteredpass == "Junaid#*1544") {
-                document.getElementById('form1').submit();
-            }
-            else {
-                alert("entered password is wrong!!!!");
-            }
-        }
-
-        function checkPassword2() {
-            var enteredpass = document.getElementById('password2').value;
-
-            if (enteredpass == "Naim#*4999") {
-                document.getElementById('form2').submit();
-            }
-            else {
-                alert("entered password is wrong!!!!");
-            }
-        }
-
-    </script>
-
 </head>
-
 <body>
-    <!--/* <form action="/login" method="get">-->
-    <div class="main">
-        <div class="cars-container">
-            <div class="box" id="box1">
-                <div class="img">
-                    <img src="/venue.jpg" alt="">
-                </div>
-                <div class="car-no">
-                    <label for="carno"><b>MH24BR7699</b></label>
-                </div>
-
-                <div class="log-btn">
-                    <input type="button" value="Login" onclick="openPopup1()">
-                </div>
+    <div class="login-container">
+        <div class="business-details">
+            <img src="logo.jpg" alt="Business Logo">
+            <h3>project By Gcreatix</h3>
+            <p>web developmnet that really clicks you and your Business....!</p>
+            <div class="contact-info">
+                <p><!--<img src="https://fonts.gstatic.com/s/i/googlematerialicons/email/v11/24px.svg" alt="Email Icon">--> <label for="">Email: gcreatixofficial@gmail.com</label></p>
+                <p><!--<img src="https://fonts.gstatic.com/s/i/googlematerialicons/phone_android/v11/24px.svg" alt="Phone Icon">--> +91 7517458787</p>
             </div>
-            </form>
-
-            <div class="box" id="box2">
-                <div class="img">
-                    <img src="/Brezza.jpg" alt="">
-                </div>
-                <div class="car-no">
-                    <label for="carno"><b>MH24AW7699</b></label>
-                </div>
-
-                <div class="log-btn">
-                    <input type="button" value="Login" onclick="openPopup2()">
-                </div>
-            </div>
-
         </div>
-        <div class="logo">
-            <img src="/logo.jpg" alt="">
+        <form class="login-form" action="/login" method="POST">
+            
+            {{#if error}}
+                <p class="error">{{error}}</p>
+            {{/if}}
+        <div class="login-form">
+            <h2>Gcreatix login</h2>
+            <input type="text" placeholder="Username" name="username" id="username">
+            <input type="password" placeholder="Password" name="password" id="password">
+            <button type="submit">Log In</button>
+            <a href="#">Forgot password?</a>
+            <hr>
+        </form>
+            <!--<a href="#" class="create-account">Create New Account</a>-->
         </div>
-
     </div>
-
-    <form action="/renderoff" method="get" id="form1"></form>
-    <div id="popup1" class="popup-form">
-        <button onclick="closepopup1()">x</button>
-        <div class="popup-header">
-            <img src="/venue.jpg" alt="" class="popup-image">
-            <label for="password">Enter Password:</label>
-        </div>
-        <input type="password" id="password" name="password" placeholder="Password" required>
-        <button onclick="checkPassword1()">Submit</button>
-    </div>
-    </form>
-
-    <form action="/render" method="get" id="form2"></form>
-    <div id="popup2" class="popup-form">
-        <button onclick="closepopup2()">x</button>
-        <div class="popup-header">
-            <img src="/Brezza.jpg" alt="" class="popup-image">
-            <label for="password">Enter Password:</label>
-        </div>
-        <input type="password" id="password2" name="password" placeholder="Password" required>
-        <button onclick="checkPassword2()">Submit</button>
-    </div>
-    </form>
-    <!--</form>-->
-
+   
 </body>
-
 </html>

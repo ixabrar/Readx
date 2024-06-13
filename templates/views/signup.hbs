@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration Form</title>
+    <style>
+        /* Custom CSS for User Registration Form */
+        body {
+            background: #f0f2f5;
+           
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #555;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.25);
+            background-color: #f0f8ff;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-primary:focus {
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .form-group-half {
+            flex: 1;
+        }
+    </style>
+</head>
+
+<body style="background-image: url(back.jpg) no-repeat;">
+    <div class="container">
+        <h2>User Registration Form</h2>
+        <form action="/signup" method="post" enctype="multipart/form-data">
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+                <div class="form-group form-group-half">
+                    <label for="mobileno" class="form-label">Mobile No:</label>
+                    <input type="text" class="form-control" id="mobileno" name="mobno" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="username" class="form-label">Username:</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group form-group-half">
+                    <label for="password" class="form-label">Password:</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="company" class="form-label">Company Name:</label>
+                    <input type="text" class="form-control" id="company" name="cname" required>
+                </div>
+                <div class="form-group">
+                    <label for="photo" class="form-label">Photo Upload:</label>
+                    <input type="file" class="form-control" id="photo" name="photo" accept="image/*" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="connstring" class="form-label">Connection String:</label>
+                    <input type="text" class="form-control" id="connstring" name="connstring" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="store name" class="form-label">Business Name:</label>
+                    <input type="text" class="form-control" id="connstring" name="BusinessName" required>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group form-group-half">
+                    <label for="business address" class="form-label">Business address:</label>
+                    <input type="text" class="form-control" id="connstring" name="BusinessAddress" required>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary">Submit</button>
+        </form>
+    </div>
+</body>
+
+</html>

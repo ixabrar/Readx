@@ -105,31 +105,28 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>MobNo</th>
-                    <th>LicenceNo</th>
-                    <th>LLRType</th>
+                    <th>Gender</th>
+                    <th>Start AddmissionDate</th>     
+                    <th>End AddmissionDate</th>
                     <th>Type</th>
-                    <th>AddmissionDate</th>
                     <th>Total</th>
                     <th>Deposite</th>
                     <th>Pending</th>
-                    <th>MDLStatus</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Sample Data with 20 rows -->
                 {{#each data}}
                 <tr>
                     <td>{{ID}}</td>
                     <td>{{Name}}</td>
                     <td>{{MobNo}}</td>
-                    <td>{{LicenceNo}}</td>
-                    <td>{{LLRType}}</td>
+                    <td>{{gender}}</td>
+                    <td>{{formatDate this.SAddmissionDate}}</td>
+                    <td>{{formatDate this.EAddmissionDate}}</td>
                     <td>{{Type}}</td>
-                    <td>{{formatDate this.AddmissionDate}}</td>
                     <td>{{Total}}</td>
                     <td>{{Deposite}}</td>
                     <td>{{Pending}}</td>
-                    <td>{{MDLStatus}}</td>
                 </tr>
                 {{/each}}
             </tbody>
@@ -176,7 +173,7 @@
                 const table = document.getElementById('dataTable');
 
                 const numRows = table.rows.length;
-                const cellFontSize = 7;
+                const cellFontSize = 8;
 
                 for (let i = 0; i < numRows; i++) {
                     const row = table.rows[i];
